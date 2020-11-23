@@ -1,16 +1,44 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
 <html>
+
 <head>
-  <title>audioBLAST!</title>
+<title>audioBLAST! Recordings</title>
+<link rel="stylesheet" href="https://cdn.audioblast.org/ab-api.css">
+<link href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+<script type="text/javascript" src="https://cdn.audioblast.org/ab-tabulator.js"></script>
 </head>
 
 <body>
-  <h1>audioBLAST!</h1>
-  <p>Welcome to audioBLAST!</p>
-  <ul>
-    <li><a href="https://audioblast.org">Home</a></li>
-    <li>ann-o-mate</li>
-    <li>API</li>
-    <li><a href="https://cdn.audioblast.org">CDN</a></li>
-  </ul>
+<?php
+if (isset($_GET["page"])) {
+  $current = $_GET["page"];
+} else {
+  $current = "recordings";
+}
+?>
+
+<h1><?php print($current); ?></h1>
+
+<ul class='ulhoriz'>
+<?php
+$types = json_decode(file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+foreach ($types as $type) {
+  print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->name."</a></li>");
+}
+?>
+</ul>
+
+<div id="data-table">
+</div>
+
 </body>
+
+<script>
+generateTabulator("#data-table", "<?php print($current); ?>");
+</script>
 </html>
