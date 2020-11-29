@@ -28,10 +28,17 @@ if (isset($_GET["page"])) {
 <?php
 $types = json_decode(file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
 foreach ($types as $type) {
-  print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->name."</a></li>");
+  print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
 }
 ?>
 </ul>
+
+<div id="module-info">
+<?php
+  $minfo = json_decode(file_get_contents("https://api.audioblast.org/standalone/modules/module_info/?output=nakedJSON&module=".$current));
+  print($minfo->desc);
+?>
+</div>
 
 <div id="data-table">
 </div>
