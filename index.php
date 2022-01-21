@@ -26,7 +26,7 @@ if (isset($_GET["page"])) {
 
 <ul class='ulhoriz'>
 <?php
-$types = json_decode(file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+$types = json_decode(file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
 foreach ($types as $type) {
   print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
 }
@@ -35,7 +35,7 @@ foreach ($types as $type) {
 
 <div id="module-info">
 <?php
-  $minfo = json_decode(file_get_contents("https://api.audioblast.org/standalone/modules/module_info/?output=nakedJSON&module=".$current));
+  $minfo = json_decode(file_get_contents("http://api.audioblast.org/standalone/modules/module_info/?output=nakedJSON&module=".$current));
   print($minfo->desc);
 ?>
 </div>
