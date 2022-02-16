@@ -22,10 +22,12 @@ if (isset($_GET["page"])) {
 }
 ?>
 
+<a href="index.php"><img src="https://cdn.audioblast.org/audioblast_logo.png" /></a>
 <h1><?php print($current); ?></h1>
+
 <?php
   if ($current == "home") {
-    print file_get_contents("home.html");
+    include("home.php");
   } else {
 ?>
 <ul class='ulhoriz'>
