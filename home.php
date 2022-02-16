@@ -4,9 +4,13 @@
 
 <h2>You can browse...</h2>
 <h3><a href="/?page=recordings" id="recordings"></a></h3>
+<p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
 <h3><a href="/?page=annomate" id="annomate"></a></h3>
+<p>Identifications made by humans and algorithms.</p>
 <h3><a href="/?page=traits" id="traits"></a></h3>
+<p>From the literature, and calculated.</p>
 <h3><a href="/?page=recordingstaxa" id="taxa"></a></h3>
+<p></p>
 </div>
 
 <script>
