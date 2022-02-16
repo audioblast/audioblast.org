@@ -24,7 +24,8 @@
       requesth.onreadystatechange = function() {
         if(requesth.readyState === XMLHttpRequest.DONE && requesth.status === 200) {
           var data = JSON.parse(requesth.responseText);
-          document.getElementById("hours").innerHTML = "("+parseInt(data.hours).toLocaleString() + " hours)";
+          document.getElementById("hours").innerHTML = "("+parseInt(data.hours).toLocaleString() + " hours: "
+            +parseFloat(data.hours/(24*365.25)).toLocaleString()+ " years)";
         }
       }
       requesth.send();
