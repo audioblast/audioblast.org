@@ -6,7 +6,7 @@
 <h3><a href="/?page=recordings" id="recordings"></a></h3>
 <p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
 <h3><a href="/?page=annomate" id="annomate"></a></h3>
-<p>Identifications made by humans and algorithms.</p>
+<p>Made by humans and algorithms, using some of our <b><span id="analysiscount"></span></b> analyses.</p>
 <h3><a href="/?page=traits" id="traits"></a></h3>
 <p>From the literature, and calculated.</p>
 <p></p>
@@ -34,6 +34,17 @@
     }
   }
   request.send();
+
+  var request2 = new XMLHttpRequest();
+  request2.open("GET", "https://api.audioblast.org/standalone/analysis/fetch_analysis_counts/?output=nakedJSON");
+  request2.onreadystatechange = function() {
+    if(request2.readyState === XMLHttpRequest.DONE && request2.status === 200) {
+      var data = JSON.parse(request2.responseText);
+      document.getElementById("analysiscount").innerHTML = parseInt(data.total).toLocaleString();
+    }
+  }
+  request2.send();
+
 </script>
 
 <h2>Credits</h2>
