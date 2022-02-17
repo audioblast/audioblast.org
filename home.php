@@ -47,6 +47,21 @@
 
 </script>
 
+<h2>Other ways to acess</h2>
+<table>
+  <tr>
+    <td><img src="https://cdn.audioblast.org/python-logo-master-v3-TM.png" width="200px" /></td>
+    <td><b><a href="https://github.com/audioblast/abPython">abPython</a></b><br>Python wrapper for audioBlast API</td>
+  </tr>
+  <tr>
+    <td><img src = "https://cdn.audioblast.org/Rlogo.png" width="200px" /></td>
+    <td>
+      <b><a href="https://cran.r-project.org/package=sonicscrewdriver">SonicScrewdriveR</a></b><br>Access audioBlast via the R environment<br/><br/>
+      <b><a href="https://cran.r-project.org/package=warbleR">warbleR</a></b><br>Access to ann-o-mate
+    </td>
+  </tr>
+</table>
+
 <h2>Credits</h2>
 <p>This project was conceived and developed as part of the Leverhulme Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
 <p>It is currently hosted by the Natural History Museum, London and developed (in part) as part of the <i>Urban Nature Project</i>.</p>
