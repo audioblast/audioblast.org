@@ -18,12 +18,18 @@ error_reporting(E_ALL);
 if (isset($_GET["page"])) {
   $current = $_GET["page"];
 } else {
-  $current = "recordings";
+  $current = "home";
 }
 ?>
 
+<a href="index.php"><img src="https://cdn.audioblast.org/audioblast_logo.png" /></a>
 <h1><?php print($current); ?></h1>
 
+<?php
+  if ($current == "home") {
+    include("home.php");
+  } else {
+?>
 <ul class='ulhoriz'>
 <?php
 $types = json_decode(file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
@@ -42,7 +48,9 @@ foreach ($types as $type) {
 
 <div id="data-table">
 </div>
-
+<?php
+}
+?>
 </body>
 
 <script>
