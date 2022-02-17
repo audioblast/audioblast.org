@@ -9,7 +9,6 @@
 <p>Identifications made by humans and algorithms.</p>
 <h3><a href="/?page=traits" id="traits"></a></h3>
 <p>From the literature, and calculated.</p>
-<h3><a href="/?page=recordingstaxa" id="taxa"></a></h3>
 <p></p>
 </div>
 
@@ -22,7 +21,6 @@
       document.getElementById("recordings").innerHTML = parseInt(data.counts.recordings).toLocaleString() + " recordings <span id='hours'></span>";
       document.getElementById("annomate").innerHTML = parseInt(data.counts.annomate).toLocaleString() + " annotations";
       document.getElementById("traits").innerHTML = parseInt(data.counts.traits).toLocaleString() + " traits";
-      document.getElementById("taxa").innerHTML = parseInt(data.counts["recordings-taxa"]).toLocaleString() + " taxa";
       var requesth = new XMLHttpRequest();
       requesth.open("GET", "https://api.audioblast.org/standalone/data/list_hours/?output=nakedJSON");
       requesth.onreadystatechange = function() {
