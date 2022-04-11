@@ -9,16 +9,34 @@ var generateTabulator = function(element, table) {
         var element = this.extraInfo[0];
         var cols = JSON.parse(this.responseText);
         var ajaxURL = 'https://api.audioblast.org/data/'+table+'/';
+        var initialFilters = [];
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        const keys = Object.keys(params);
+        for (let i=0; i < keys.length; i++) {
+          switch(keys[i]) {
+            case "page":
+              break;
+            default:
+              initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
+          }
+        }
         var tabletabulator = new Tabulator(element, {
            columns:parseColumns(cols),
-           height:"100%",           
+           height:"100%",
            ajaxURL:ajaxURL,
            progressiveLoad:"scroll",
            filterMode:"remote",
            paginationSize:50,
            dataSendParams:{
              "size":"page_size",
-           }
+           },
+           initialFilter:initialFilters
+        });
+        tabletabulator.on("rowDblClick", function(e, row){
+          const data =row.getData();
+          const url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+          window.open(url);
         });
       } else {
         console.error(xhr.statusText);
@@ -89,6 +107,14 @@ var parseColumns = function(cols) {
     }
   }
   return(cols);
+}
+
+var columnFields = function(cols) {
+  var names = [];
+  for (var i = 0; i < cols.length; i++) {
+    names.push(cols[i]["field"]);
+  }
+  return(names);
 }
 
 var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParams){
