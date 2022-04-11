@@ -9,7 +9,7 @@ $special_pages = array(
 );
 
 if (in_array($_SERVER['REQUEST_URI'], $special_pages)) {
-  print(file_get_contents(__DIR__.'/ab-api.css'));
+  print(file_get_contents(__DIR__.$_SERVER['REQUEST_URI']));
   exit;
 }
 
