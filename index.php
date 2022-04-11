@@ -2,6 +2,17 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+$special_pages = array(
+  "/ab-tabulator.js",
+  "/ab-api.css"
+);
+
+if (in_array($_SERVER['REQUEST_URI'], $special_pages)) {
+  print(file_get_contents(__DIR__.'/ab-api.css'));
+  exit;
+}
+
 ?>
 <html>
 
