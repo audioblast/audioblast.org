@@ -13,12 +13,21 @@ var generateTabulator = function(element, table) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         const keys = Object.keys(params);
-        for (let i=0; i < keys.length; i++) {
-          switch(keys[i]) {
-            case "page":
+        if (keys.includes("page")) {
+          for (let i=0; i < keys.length; i++) {
+            switch(keys[i]) {
+              case "page":
+                break;
+              default:
+                initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
+            }
+          }
+        }
+        if (typeof(filterAB) !== 'undefined') {
+          switch (element) {
+            case "#search-same-species":
+              initialFilters.push({field:"taxon", type:"=", value:filterAB['taxon']});
               break;
-            default:
-              initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
           }
         }
         var tabletabulator = new Tabulator(element, {
@@ -44,6 +53,7 @@ var generateTabulator = function(element, table) {
             window.open(url, "_self");
           }
         });
+        return(tabletabulator);
       } else {
         console.error(xhr.statusText);
       }
