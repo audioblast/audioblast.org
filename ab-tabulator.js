@@ -49,6 +49,12 @@ var generateTabulator = function(element, table) {
           if (urlParams.get("page")=="recordings") {
             url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
           }
+          //audioBLAST page
+          if (typeof(filterAB) !== 'undefined') {
+            url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+          }
+        }
+
           if (url != null) {
             window.open(url, "_self");
           }
