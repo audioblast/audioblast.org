@@ -53,13 +53,10 @@ var generateTabulator = function(element, table) {
           if (typeof(filterAB) !== 'undefined') {
             url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
           }
-        }
-
           if (url != null) {
             window.open(url, "_self");
           }
         });
-        return(tabletabulator);
       } else {
         console.error(xhr.statusText);
       }
