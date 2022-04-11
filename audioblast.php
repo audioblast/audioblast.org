@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>audioBlast! Search</title>
-  <link rel="stylesheet" href="http://audioblast.org/ab-api.css">
+  <link rel="stylesheet" href="https://audioblast.org/ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
   <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
   <script type="text/javascript" src="https://audioblast.org/ab-tabulator.js"></script>
