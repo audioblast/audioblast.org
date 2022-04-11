@@ -2,15 +2,26 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+$special_pages = array(
+  "/ab-tabulator.js",
+  "/ab-api.css"
+);
+
+if (in_array($_SERVER['REQUEST_URI'], $special_pages)) {
+  print(file_get_contents(__DIR__.'/ab-api.css'));
+  exit;
+}
+
 ?>
 <html>
 
 <head>
 <title>audioBLAST! Recordings</title>
-<link rel="stylesheet" href="https://cdn.audioblast.org/ab-api.css">
-<link href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css" rel="stylesheet">
+<link rel="stylesheet" href="ab-api.css">
+<link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
 <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
-<script type="text/javascript" src="https://cdn.audioblast.org/ab-tabulator.js"></script>
+<script type="text/javascript" src="ab-tabulator.js"></script>
 </head>
 
 <body>
