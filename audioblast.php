@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>audioBlast! Search</title>
+  <title>audioBlast!</title>
   <link rel="stylesheet" href="https://audioblast.org/ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
   <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
@@ -8,7 +8,8 @@
 </head>
 
 <body>
-  <h1>audioBlast! Search (VERY VERY ALPHA)</h1>
+  <h1>𝛼-Blast! (very alpha version of audioBLAST!)</h1>
+  <p>This will be where the SonicSearch engine will show you cool stuff.</p>
   <?php
   $source = $_GET["source"];
   $id = $_GET["id"];
