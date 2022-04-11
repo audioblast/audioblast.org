@@ -35,8 +35,14 @@ var generateTabulator = function(element, table) {
         });
         tabletabulator.on("rowDblClick", function(e, row){
           const data =row.getData();
-          const url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
-          window.open(url);
+          var url = null;
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.get("page")=="recordings") {
+            url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+          }
+          if (url != null) {
+            window.open(url);
+          }
         });
       } else {
         console.error(xhr.statusText);
