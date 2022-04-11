@@ -41,7 +41,7 @@ var generateTabulator = function(element, table) {
             url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
           }
           if (url != null) {
-            window.open(url);
+            window.open(url, "_self");
           }
         });
       } else {
