@@ -1,3 +1,31 @@
+body {
+  margin:0px;
+}
+
+.audioblast-flash {
+  height: 37px;
+  float: left;
+  padding-right: 3px;
+}
+
+#title {
+  padding:5px;
+  background-color:#888;
+  width:100%;
+  overflow:hidden;
+  margin-bottom:3px;
+}
+
+#title h1 {
+  margin:0px;
+}
+
+#menu {
+  background-color:#D6D6D6;
+  width:100%;
+  padding:3px;
+}
+
 .search-table {
   height:300px !important;
 }
@@ -9,14 +37,16 @@
 }
 
 .ulhoriz {
-  background: #888;
   padding: 5px;
-  margin: 10px;
+  margin:0px;
 }
 
 .ulhoriz li {
   display: inline;
-  padding-right: 10px;
+  padding:3px;
+  border-radius:5px;
+  margin-right: 10px;
+  background-color:#888;
 }
 
 .stripe {
