@@ -1,11 +1,16 @@
-<h2>You can browse...</h2>
+<div class="feature-container">
+<div class="feature">
 <h3><a href="/?page=recordings" id="recordings"></a></h3>
 <p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
+</div>
+<div class="feature">
 <h3><a href="/?page=annomate" id="annomate"></a></h3>
 <p>Made by humans and algorithms, using some of our <b><span id="analysiscount"></span></b> analyses.</p>
+</div>
+<div class="feature">
 <h3><a href="/?page=traits" id="traits"></a></h3>
 <p>From the literature, and calculated.</p>
-<p></p>
+</div>
 </div>
 
 <script>
