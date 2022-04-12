@@ -13,12 +13,21 @@ var generateTabulator = function(element, table) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         const keys = Object.keys(params);
-        for (let i=0; i < keys.length; i++) {
-          switch(keys[i]) {
-            case "page":
+        if (keys.includes("page")) {
+          for (let i=0; i < keys.length; i++) {
+            switch(keys[i]) {
+              case "page":
+                break;
+              default:
+                initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
+            }
+          }
+        }
+        if (typeof(filterAB) !== 'undefined') {
+          switch (element) {
+            case "#search-same-species":
+              initialFilters.push({field:"taxon", type:"=", value:filterAB['taxon']});
               break;
-            default:
-              initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
           }
         }
         var tabletabulator = new Tabulator(element, {
@@ -38,6 +47,10 @@ var generateTabulator = function(element, table) {
           var url = null;
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.get("page")=="recordings") {
+            url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+          }
+          //audioBLAST page
+          if (typeof(filterAB) !== 'undefined') {
             url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
           }
           if (url != null) {
