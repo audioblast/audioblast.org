@@ -25,6 +25,53 @@ body {
   padding:3px;
 }
 
+.home-search {
+  background-color:#D6D6D6;
+  margin:10px;
+  padding:10px;
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+}
+
+#search {
+  height:46px;
+  width:calc(100% - 80px);
+  font-size: 30px;
+  font-weight: 100;
+}
+
+.search-control {
+}
+
+#zoom-control {
+  float:right;
+  padding-right:20px;
+}
+
+#zoom-control .ulhoriz {
+  margin:0px;
+  padding:0px;
+}
+
+#zoom-control li {
+  background-color: #888;
+  color:white;
+  width:40px;
+  height:40px;
+  display:inline-block;
+}
+
+#zoom-control li img {
+  height:100%;
+  width:100%;
+}
+
+.audioblast-button:hover {
+  filter: invert(61%) sepia(77%) saturate(1488%) hue-rotate(360deg) brightness(103%) contrast(103%);
+}
+
 .feature {
   background-color:#D6D6D6;
   margin:10px;
