@@ -1,3 +1,93 @@
+body {
+  margin:0px;
+}
+
+.audioblast-flash {
+  height: 37px;
+  float: left;
+  padding-right: 3px;
+}
+
+#title {
+  background-color:#888;
+  width:100%;
+  overflow:hidden;
+  margin-bottom:3px;
+}
+
+#title h1 {
+  margin:0px;
+}
+
+#menu {
+  background-color:#D6D6D6;
+  width:100%;
+  padding:3px;
+}
+
+.home-search {
+  background-color:#D6D6D6;
+  margin:10px;
+  padding:10px;
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+}
+
+#search {
+  height:46px;
+  width:calc(100% - 80px);
+  font-size: 30px;
+  font-weight: 100;
+}
+
+.search-control {
+}
+
+#zoom-control {
+  float:right;
+  padding-right:20px;
+}
+
+#zoom-control .ulhoriz {
+  margin:0px;
+  padding:0px;
+}
+
+#zoom-control li {
+  background-color: #888;
+  color:white;
+  width:40px;
+  height:40px;
+  display:inline-block;
+}
+
+#zoom-control li img {
+  height:100%;
+  width:100%;
+}
+
+.audioblast-button:hover {
+  filter: invert(61%) sepia(77%) saturate(1488%) hue-rotate(360deg) brightness(103%) contrast(103%);
+}
+
+.feature {
+  background-color:#D6D6D6;
+  margin:10px;
+  padding:3px;
+}
+
+.feature-container div:first-child {
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+}
+
+.feature-container div:last-child {
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+}
+
 .search-table {
   height:300px !important;
 }
@@ -9,14 +99,16 @@
 }
 
 .ulhoriz {
-  background: #888;
   padding: 5px;
-  margin: 10px;
+  margin:0px;
 }
 
 .ulhoriz li {
   display: inline;
-  padding-right: 10px;
+  padding:3px;
+  border-radius:5px;
+  margin-right: 10px;
+  background-color:#888;
 }
 
 .stripe {

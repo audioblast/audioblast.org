@@ -1,15 +1,36 @@
-<p>Welcome to audioblast!.</p>
-<p>Audioblast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
-<p>This website uses the <a href="https://api.audioblast.org">audioBLAST API</a> which you can use to create your own projects.</p>
+<div class="home-search">
+  <input id="search" placeholder="Search..." autocomplete="off">
+  <div id="zoom-control" class="search-control">
+    <ul class="ulhoriz">
+      <li>
+        <a onclick="searchAudioBlast()">
+          <img class="audioblast-button" src="https://cdn.audioblast.org/audioblast_flash_white.png" title="alphaBLAST! Search"/></a>
+      </li>
+    </ul>
+  </div>
 
-<h2>You can browse...</h2>
-<h3><a href="/?page=recordings" id="recordings"></a></h3>
-<p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
-<h3><a href="/?page=annomate" id="annomate"></a></h3>
-<p>Made by humans and algorithms, using some of our <b><span id="analysiscount"></span></b> analyses.</p>
-<h3><a href="/?page=traits" id="traits"></a></h3>
-<p>From the literature, and calculated.</p>
-<p></p>
+  <script>
+    function searchAudioBlast() {
+      const term = document.getElementById("search").value;
+      window.open("audioblast.php/?search="+term, "_self");
+    }
+  </script>
+</div>
+
+
+<div class="feature-container">
+  <div class="feature">
+    <h3><a href="/?page=recordings" id="recordings"></a></h3>
+    <p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
+  </div>
+  <div class="feature">
+    <h3><a href="/?page=annomate" id="annomate"></a></h3>
+    <p>Made by humans and algorithms, using some of our <b><span id="analysiscount"></span></b> analyses.</p>
+  </div>
+  <div class="feature">
+    <h3><a href="/?page=traits" id="traits"></a></h3>
+    <p>From the literature, and calculated.</p>
+  </div>
 </div>
 
 <script>

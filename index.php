@@ -40,29 +40,35 @@ if (isset($_GET["page"])) {
 }
 ?>
 
-<a href="index.php"><img src="https://cdn.audioblast.org/audioblast_logo.png" /></a>
-<h1><?php print($current); ?></h1>
+<div id="title">
+  <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
+  <h1>audioBLAST! Browser</h1>
+  <div id="menu">
+  <?php
+  if ($current == "home") {
+    ?>
+    <h2>Welcome to audioBLAST!</h2>
+    <p>Audioblast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
+    <p>This website uses the <a href="https://api.audioblast.org">audioBLAST API</a> which you can use to create your own projects.</p>
+    <?php
+  } else {
+    print("<ul class='ulhoriz'>");
+    $types = json_decode(
+      file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+    foreach ($types as $type) {
+      print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
+    }
+    print("</ul>");
+  }
+  ?>
+  </div>
+</div>
 
 <?php
   if ($current == "home") {
     include("home.php");
   } else {
 ?>
-<ul class='ulhoriz'>
-<?php
-$types = json_decode(file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
-foreach ($types as $type) {
-  print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
-}
-?>
-</ul>
-
-<div id="module-info">
-<?php
-  $minfo = json_decode(file_get_contents("http://api.audioblast.org/standalone/modules/module_info/?output=nakedJSON&module=".$current));
-  print($minfo->desc);
-?>
-</div>
 
 <div id="data-table">
 </div>
