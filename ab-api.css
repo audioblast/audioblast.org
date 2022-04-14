@@ -37,12 +37,21 @@ body {
 
 #search {
   height:46px;
-  width:calc(100% - 80px);
+  width:calc(100% - 56px);
   font-size: 30px;
   font-weight: 100;
+  border-top-left-radius:5px;
+  border-bottom-left-radius:5px;
+  border:0px;
 }
 
 .search-control {
+  padding-right:0px !important;
+}
+
+.search-control ul li {
+  border-top-left-radius:0px !important;
+  border-bottom-left-radius:0px !important;
 }
 
 #zoom-control {
