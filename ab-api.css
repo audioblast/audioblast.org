@@ -43,6 +43,7 @@ body {
   border-top-left-radius:5px;
   border-bottom-left-radius:5px;
   border:0px;
+  outline-style:none;
 }
 
 .search-control {
