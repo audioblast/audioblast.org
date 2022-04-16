@@ -2,25 +2,8 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
-$special_pages = array(
-  "/ab-tabulator.js" => NULL,
-  "/ab-api.css" => NULL,
-  "/audioblast/" => "audioblast.php"
-);
-
-if (in_array($_SERVER['REQUEST_URI'], array_keys($special_pages))) {
-  if ($special_pages[$_SERVER['REQUEST_URI']] == NULL) {
-    print(file_get_contents(__DIR__.$_SERVER['REQUEST_URI']));
-    exit;
-  }
-}
-$path = explode("?", $_SERVER['REQUEST_URI'])[0];
-if (in_array($path, array_keys($special_pages))) {
-  include($special_pages[$path]);
-  exit;
-}
 ?>
+
 <html>
 
 <head>
