@@ -139,29 +139,21 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
     return container;
  }
 
-//custom max min filter function
+//Custom min/max filter function
 function minMaxFilterFunction(headerValue, rowValue, rowData, filterParams){
-    //headerValue - the value of the header filter element
-    //rowValue - the value of the column in this row
-    //rowData - the data for the row being filtered
-    //filterParams - params object passed to the headerFilterFuncParams property
-
-        if(rowValue){
-            if(rowValue == null) {
-              return false;
-            }
-            if(headerValue.start != ""){
-                if(headerValue.end != ""){
-                    return rowValue >= headerValue.start && rowValue <= headerValue.end;
-                }else{
-                    return rowValue >= headerValue.start;
-                }
-            }else{
-                if(headerValue.end != ""){
-                    return rowValue <= headerValue.end;
-                }
-            }
-        }
-
-    return true; //must return a boolean, true if it passes the filter.
+  if (rowValue) {
+    if (rowValue == null) {return false;}
+    if (headerValue.start != "") {
+      if (headerValue.end != "") {
+        return rowValue >= headerValue.start && rowValue <= headerValue.end;
+      } else {
+        return rowValue >= headerValue.start;
+      }
+    } else {
+      if (headerValue.end != "") {
+        return rowValue <= headerValue.end;
+      }
+    }
+  }
+  return true; //must return a boolean, true if it passes the filter.
 }

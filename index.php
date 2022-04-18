@@ -2,27 +2,27 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-?>
 
-<html lang="en">
-
-<head>
-<title>audioBLAST! Recordings</title>
-<link rel="stylesheet" href="ab-api.css">
-<link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-<script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
-<script type="text/javascript" src="ab-tabulator.js"></script>
-</head>
-
-<body>
-<?php
 if (isset($_GET["page"])) {
   $current = $_GET["page"];
 } else {
   $current = "home";
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <title><?php print("audioBLAST! ".$current); ?></title>
+
+  <link rel="stylesheet" href="ab-api.css">
+  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
+
+  <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+  <script src="ab-tabulator.js"></script>
+</head>
+
+<body>
 <div id="title">
   <a href="/">
     <img src="https://cdn.audioblast.org/audioblast_flash.png"
@@ -51,19 +51,18 @@ if (isset($_GET["page"])) {
 </div>
 
 <?php
-  if ($current == "home") {
-    include("home.php");
-  } else {
-?>
-
-<div id="data-table">
-</div>
-<?php
+if ($current == "home") {
+  include("home.php");
+} else {
+  ?>
+  <div id="data-table">
+  </div>
+  <script>
+    generateTabulator("#data-table", "<?php print($current); ?>");
+  </script>
+  <?php
 }
 ?>
 </body>
 
-<script>
-generateTabulator("#data-table", "<?php print($current); ?>");
-</script>
 </html>
