@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ?>
 
-<html>
+<html lang="en">
 
 <head>
 <title>audioBLAST! Recordings</title>
@@ -24,7 +24,10 @@ if (isset($_GET["page"])) {
 ?>
 
 <div id="title">
-  <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
+  <a href="/">
+    <img src="https://cdn.audioblast.org/audioblast_flash.png"
+    alt="audioBLAST flash logo"
+    class="audioblast-flash" /></a>
   <h1>audioBLAST! Browser</h1>
   <div id="menu">
   <?php
