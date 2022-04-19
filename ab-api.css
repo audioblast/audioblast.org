@@ -104,12 +104,12 @@ h3 {
   margin-right:5px;
 }
 
-.feature-container div:first-child {
+.feature-container .feature:first-child {
   border-top-left-radius:25px;
   border-top-right-radius:25px;
 }
 
-.feature-container div:last-child {
+.feature-container .feature:last-child {
   border-bottom-left-radius:25px;
   border-bottom-right-radius:25px;
 }

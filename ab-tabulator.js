@@ -1,4 +1,4 @@
-var generateTabulator = function(element, table) {
+var generateTabulator = function(element, table, iFilter={}) {
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "https://api.audioblast.org/data/"+table+"/columns/?output=nakedJSON", true);
   xhr.extraInfo = [element, table];
@@ -9,7 +9,7 @@ var generateTabulator = function(element, table) {
         var element = this.extraInfo[0];
         var cols = JSON.parse(this.responseText);
         var ajaxURL = 'https://api.audioblast.org/data/'+table+'/';
-        var initialFilters = [];
+        var initialFilters = [iFilter];
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         const keys = Object.keys(params);
