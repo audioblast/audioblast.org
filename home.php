@@ -1,6 +1,9 @@
 <div class="home-search">
   <label for="search" id="search-label">Search</label>
-  <input id="search" placeholder="Search..." autocomplete="off">
+  <input id="search"
+         placeholder="Search..."
+         autocomplete="off"
+         onkeydown="if (event.keyCode == 13) { searchAudioBlast(); }">
   <div id="zoom-control" class="search-control">
     <ul class="ulhoriz">
       <li>
