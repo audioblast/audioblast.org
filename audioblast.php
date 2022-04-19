@@ -7,6 +7,14 @@
   <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
   <script type="text/javascript" src="/ab-tabulator.js"></script>
   <script type="text/javascript" src="/ab-search.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      searchAB.addPlugin(emojiReplace);
+      searchAB.addPlugin(taxonSearch);
+      searchAB.addPlugin(recordingSearch);
+      searchAB.init();
+    });
+  </script>
 </head>
 
 <body>

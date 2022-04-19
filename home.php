@@ -15,8 +15,13 @@
       </li>
     </ul>
   </div>
+  <details id="search-suggests">
+    <summary>Search suggestions</summary>
+    <div id="search-suggests-details"></div>
+  </details>
 
   <script>
+    searchAB.searchSuggest("search-suggests-details");
     function searchAudioBlast() {
       const term = document.getElementById("search").value;
       window.open("audioblast.php/?search="+term, "_self");

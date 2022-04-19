@@ -1,10 +1,3 @@
-document.addEventListener("DOMContentLoaded", function(event) {
-  searchAB.addPlugin(emojiReplace);
-  searchAB.addPlugin(taxonSearch);
-  searchAB.addPlugin(recordingSearch);
-  searchAB.init();
-});
-
 function arrayEquals(a, b) {
   return Array.isArray(a) &&
     Array.isArray(b) &&
@@ -15,7 +8,7 @@ function arrayEquals(a, b) {
 const searchAB = {
   consoleContainer: "menu",
   plugins: {},
-  name: "King Solomon's Ring",
+  name: "audioBLAST!",
   mode: null,
   matched: {},
   parsedData: {},
@@ -56,6 +49,27 @@ const searchAB = {
         Object.values(this.plugins)[i].canParse(string, this);
       }
     }
+  },
+  searchSuggest(element) {
+    var suggestions = [];
+    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
+      if ('searchSuggest' in Object.values(this.plugins)[i]) {
+        var suggestion = Object.values(this.plugins)[i].searchSuggest();
+        if (suggestion != false) {
+          suggestion.forEach(e => {
+            suggestions.push(e);
+          });
+        }
+      }
+    }
+    var html = '';
+    suggestions.forEach(e => {
+      html += '<a onclick="{'+
+        "document.getElementById('search').value = '"+e+"';}" + '">';
+      html += e
+      html += "</a>";
+    });
+    document.getElementById(element).innerHTML = html;
   },
   display() {
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
@@ -173,6 +187,11 @@ const taxonSearch = {
       });
     }
     return(ret);
+  },
+  searchSuggest(){
+  return([
+    "Gryllotalpa vineae"
+  ]);
   }
 }
 
@@ -206,5 +225,12 @@ const emojiReplace = {
   },
   canParse(string, core) {
     core.parsed(this.name, false);
+  },
+  searchSuggest() {
+    return(["🦗"]);
   }
 }
+
+searchAB.addPlugin(emojiReplace);
+searchAB.addPlugin(taxonSearch);
+searchAB.addPlugin(recordingSearch);

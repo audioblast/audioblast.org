@@ -49,6 +49,7 @@ h3 {
   border:0px;
   outline-style:none;
   padding:0px;
+  margin-bottom:3px;
 }
 
 .search-control {
@@ -62,6 +63,18 @@ h3 {
 
 #search-label {
   display:none;
+}
+
+summary {
+  cursor:pointer;
+}
+
+#search-suggests-details a {
+  cursor: pointer;
+  border-radius:3px;
+  background-color:darkgray;
+  margin:3px;
+  padding:3px;
 }
 
 #zoom-control {
