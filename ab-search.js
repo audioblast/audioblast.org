@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(event) {
+  searchAB.addPlugin(emojiReplace);
   searchAB.addPlugin(taxonSearch);
   searchAB.addPlugin(recordingSearch);
-  searchAB.addPlugin(emojiReplace);
   searchAB.init();
 });
 
