@@ -130,33 +130,24 @@ const taxonSearch = {
       .then(data => {
         if (data.length == 1) {
           this.data = data[0];
+          core.matched["rank"] = this.data["rank"].toLowerCase();
           core.parsed(this.name, "taxon", string);
           return;
         }
         core.parsed(this.name, false);
       })
       .catch(function (error) {
-      });
+    });
+    this.data = dataRequested;
+    return;
   },
   urlParams: ["taxon"],
   mode: "taxon",
   display(mode, matched) {
     if ("taxon" in matched) {
       var ret = '<div id="search-result-taxon" class="feature">';
-      if (this.data == null) {
-        const dataRequested = fetch("https://api.audioblast.org/data/taxa/?taxon="+matched["taxon"]+"&output=nakedJSON")
-          .then(res => res.json())
-          .then(data => {
-            if (data.length == 1) {
-              this.data = data[0];
-              document.getElementById("search-result-taxon").innerHTML = this.displayTaxon(matched);
-            }
-          })
-          .catch(function (error) {
-        });
-      } else {
-        ret += this.displayTaxon(matched);
-      }
+      Promise.resolve(this.data).then(ret += this.displayTaxon(matched)
+      );
       ret += "</div";
       return({html:ret});
     }
@@ -208,7 +199,7 @@ const recordingSearch = {
       var ret = '<div class="feature">';
       ret += "<h2>Recordings of "+matched["taxon"]+"</h2>";
       ret += '<div id="recordings-tabulator" class="search-table"></div>';
-      const script = 'generateTabulator("#recordings-tabulator", "recordings", {field:"taxon", type:"=", value:"'+matched["taxon"]+'"});';
+      const script = 'generateTabulator("#recordings-tabulator", "recordingstaxa", {field:"'+matched["rank"]+'", type:"=", value:"'+matched["taxon"]+'"});';
       return({html:ret, js:script});
     }
     return(false);
