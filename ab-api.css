@@ -129,7 +129,9 @@ summary {
 
 .search-table {
   height:300px !important;
+  margin-bottom:15px;
 }
+
 
 .module {
   background: #888;

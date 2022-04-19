@@ -9,9 +9,6 @@
   <script type="text/javascript" src="/ab-search.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function(event) {
-      searchAB.addPlugin(emojiReplace);
-      searchAB.addPlugin(taxonSearch);
-      searchAB.addPlugin(recordingSearch);
       searchAB.init();
     });
   </script>
