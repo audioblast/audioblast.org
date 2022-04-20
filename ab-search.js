@@ -234,7 +234,7 @@ const traitSearch = {
       var ret = '<div class="feature">';
       ret += "<h2>Traits "+matched["taxon"]+"</h2>";
       ret += '<div id="traits-tabulator" class="search-table"></div>';
-      const script = 'generateTabulator("#traits-tabulator", "traits", {field:"taxon", type:"=", value:"'+matched["taxon"]+'"});';
+      const script = 'generateTabulator("#traits-tabulator", "traitstaxa", {field:"'+matched["rank"]+'", type:"=", value:"'+matched["taxon"]+'"});';
 
       return({html:ret, js:script});
     }
