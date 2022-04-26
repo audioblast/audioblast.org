@@ -46,38 +46,25 @@
 </div>
 
 <script>
-  var request = new XMLHttpRequest();
-  request.open("GET", "https://api.audioblast.org/standalone/data/fetch_data_counts/?output=nakedJSON");
-  request.onreadystatechange = function() {
-    if(request.readyState === XMLHttpRequest.DONE && request.status === 200) {
-      var data = JSON.parse(request.responseText);
+  fetch("https://api.audioblast.org/standalone/data/fetch_data_counts/?output=nakedJSON")
+    .then(response => response.json())
+    .then( data => {
       document.getElementById("recordings").innerHTML = parseInt(data.counts.recordings).toLocaleString() + " recordings <span id='hours'></span>";
       document.getElementById("annomate").innerHTML = parseInt(data.counts.annomate).toLocaleString() + " annotations";
       document.getElementById("traits").innerHTML = parseInt(data.counts.traits).toLocaleString() + " traits";
-      var requesth = new XMLHttpRequest();
-      requesth.open("GET", "https://api.audioblast.org/standalone/data/list_hours/?output=nakedJSON");
-      requesth.onreadystatechange = function() {
-        if(requesth.readyState === XMLHttpRequest.DONE && requesth.status === 200) {
-          var data = JSON.parse(requesth.responseText);
+      fetch("https://api.audioblast.org/standalone/data/list_hours/?output=nakedJSON")
+        .then(response => response.json())
+        .then(data => {
           document.getElementById("hours").innerHTML = "("+parseInt(data.hours).toLocaleString() + " hours: "
             +parseFloat(data.hours/(24*365.25)).toLocaleString()+ " years)";
-        }
-      }
-      requesth.send();
-    }
-  }
-  request.send();
+        });
+    });
 
-  var request2 = new XMLHttpRequest();
-  request2.open("GET", "https://api.audioblast.org/standalone/analysis/fetch_analysis_counts/?output=nakedJSON");
-  request2.onreadystatechange = function() {
-    if(request2.readyState === XMLHttpRequest.DONE && request2.status === 200) {
-      var data = JSON.parse(request2.responseText);
+  fetch("https://api.audioblast.org/standalone/analysis/fetch_analysis_counts/?output=nakedJSON")
+    .then(response => response.json())
+    .then(data => {
       document.getElementById("analysiscount").innerHTML = parseInt(data.total).toLocaleString();
-    }
-  }
-  request2.send();
-
+    });
 </script>
 
 <div class="feature-container">
