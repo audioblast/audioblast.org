@@ -35,10 +35,8 @@ var generateTabulator = function(element, table, iFilter={}) {
         }
         var tabletabulator = new Tabulator(element, {
            columns:parseColumns(cols),
-           //height:"100%",
            ajaxURL:ajaxURL,
            progressiveLoad:"scroll",
-           progressiveLoadScrollMargin:30,
            filterMode:"remote",
            paginationSize:50,
            dataSendParams:{
