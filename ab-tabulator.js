@@ -38,6 +38,7 @@ var generateTabulator = function(element, table, iFilter={}) {
            height:"100%",
            ajaxURL:ajaxURL,
            progressiveLoad:"scroll",
+           progressiveLoadScrollMargin:30,
            filterMode:"remote",
            paginationSize:50,
            dataSendParams:{
