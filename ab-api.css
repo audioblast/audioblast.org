@@ -20,7 +20,9 @@ body {
 }
 
 #data-table {
-  height: calc(100% - 300px);
+  position: absolute;
+  top: 77px;
+  bottom:0px;
 }
 
 h3 {
