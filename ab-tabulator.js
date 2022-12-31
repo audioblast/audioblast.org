@@ -1,4 +1,4 @@
-var generateTabulator = function(element, table, iFilter={}) {
+var generateTabulator = function(element, table, iFilter=[]) {
   if (!Array.isArray(iFilter)) {
     iFilter = [iFilter];
   }
