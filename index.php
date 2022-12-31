@@ -1,9 +1,13 @@
 <?php
+$in_dev = FALSE;
+
 // If running in dev environment show errors
 if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
   ini_set('display_errors', 1);
   ini_set('display_startup_errors', 1);
   error_reporting(E_ALL);
+
+  $in_dev = TRUE;
 }
 
 if (isset($_GET["page"])) {
@@ -16,7 +20,7 @@ if (isset($_GET["page"])) {
 <html lang="en">
 
 <head>
-  <title><?php print("audioBLAST! ".$current); ?></title>
+  <title><?php print("audioBLAST! ".$current.$in_dev?" (DEV)":""); ?></title>
 
   <link rel="stylesheet" href="ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
@@ -32,7 +36,7 @@ if (isset($_GET["page"])) {
     <img src="https://cdn.audioblast.org/audioblast_flash.png"
     alt="audioBLAST flash logo"
     class="audioblast-flash" /></a>
-  <h1>audioBLAST! Browser</h1>
+  <h1>audioBLAST! Browser<?php print($in_dev?" (DEV)":"")?></h1>
   <div id="menu">
   <?php
   if ($current == "home") {
