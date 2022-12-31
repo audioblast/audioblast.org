@@ -40,7 +40,9 @@ if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
     <h2>Welcome to audioBLAST!</h2>
     <p>AudioBlast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
     <p>This website uses the <a href="https://api.audioblast.org">audioBlast API</a> which you can use to create your own projects.</p>
-    <?php
+    </div></div>
+<?php
+  include("home.php");
   } else {
     print("<ul class='ulhoriz'>");
     $types = json_decode(
@@ -48,24 +50,15 @@ if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
     foreach ($types as $type) {
       print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
     }
-    print("</ul>");
+    ?>
+    </ul>
+    <div id="data-table">
+    </div>
+    <script>
+      generateTabulator("#data-table", "<?php print($current_page); ?>");
+    </script>
+    <?php
   }
-  ?>
-  </div>
-</div>
-
-<?php
-if ($current_page == "home") {
-  include("home.php");
-} else {
-  ?>
-  <div id="data-table">
-  </div>
-  <script>
-    generateTabulator("#data-table", "<?php print($current_page); ?>");
-  </script>
-  <?php
-}
 ?>
 </body>
 
