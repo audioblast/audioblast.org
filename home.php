@@ -10,7 +10,7 @@
         <a onclick="searchAudioBlast()">
           <img class="audioblast-button"
                src="https://cdn.audioblast.org/audioblast_flash_white.png"
-               alt="alphaBLAST! Search"/>
+               alt="audioBlast! Search"/>
         </a>
       </li>
     </ul>
@@ -94,7 +94,7 @@
     <h2>Credits</h2>
   </div>
   <div class="feature">
-    <p>This project was conceived and developed as part of the Leverhulme Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
+    <p>This project was conceived and developed by <a href="https://ebaker.me.uk">Ed Baker</a> as part of the Leverhulme Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
     <p>It is currently hosted by the Natural History Museum, London and developed (in part) as part of the <i>Urban Nature Project</i>.</p>
   </div>
 </div>
