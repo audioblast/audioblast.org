@@ -181,9 +181,9 @@ const taxonSearch = {
     return(ret);
   },
   searchSuggest(){
-  return([
-    "Gryllotalpa vineae"
-  ]);
+    return([
+      "Gryllotalpa vineae"
+    ]);
   }
 }
 
@@ -230,7 +230,7 @@ const traitSearch = {
       });
   },
   display(mode, matched) {
-    if ("taxon" in matched) {
+    if ("taxon"in matched) {
       var ret = '<div class="feature">';
       ret += "<h2>Traits "+matched["taxon"]+"</h2>";
       ret += '<div id="traits-tabulator" class="search-table"></div>';
@@ -265,22 +265,39 @@ const traitSearch = {
 const KSR = {
   name:"King Solomon's Ring",
   canParse(string, core) {
-    var dataRequested = fetch("https://api.audioblast.org/data/traits/?trait="+string+"&output=nakedJSON")
+    var dataRequested = fetch("https://api.audioblast.org/data/traits/list_text_values/?output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length > 0) {
-          core.parsed(this.name, "trait", string);
-          return;
+          if (data.includes(string.toLowerCase())) {
+            core.parsed(this.name, "trait.value", string);
+            return;
+          }
         }
         core.parsed(this.name, false);
       })
       .catch(function (error) {
     });
+  },
+  display(mode, matched) {
+    if ("trait.value" in matched) {
+      var ret = '<div class="feature">';
+      var script = '';
+      ret += "<h2>"+matched["trait.value"]+"</h2>";
+      ret += '<div id="traitsvalue-tabulator" class="search-table"></div>';
+      script = 'generateTabulator("#traitsvalue-tabulator", "traits", {field:"value", type:"=", value:"'+matched["trait.value"]+'"});';
+      return({html:ret, js:script});
+    }
+  },
+  searchSuggest(){
+    return([
+      "mandibular grinding"
+    ]);
   }
 }
 
 const emojiReplace = {
-  name:"Georgia",
+  name:"Rosetta",
   preParse(string, core) {
     if(string == "🦗")  {
       core.consoleLog(this.name, "Interpreted 🦗 as Orthoptera.");
