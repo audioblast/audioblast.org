@@ -271,8 +271,8 @@ const KSR = {
         if (data.length > 0) {
           if (data.includes(string.toLowerCase())) {
             core.parsed(this.name, "trait.value", string);
+            return;
           }
-          return;
         }
         core.parsed(this.name, false);
       })
@@ -288,6 +288,11 @@ const KSR = {
       script = 'generateTabulator("#traitsvalue-tabulator", "traits", {field:"value", type:"=", value:"'+matched["trait.value"]+'"});';
       return({html:ret, js:script});
     }
+  },
+  searchSuggest(){
+    return([
+      "mandibular grinding"
+    ]);
   }
 }
 
