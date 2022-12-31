@@ -1,5 +1,7 @@
 <?php
+//Initial configurtion
 $in_dev = FALSE;
+$current_page = isset($_GET["page"]) ? $_GET["page"] : "home";
 
 // If running in dev environment show errors
 if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
@@ -9,18 +11,12 @@ if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
 
   $in_dev = TRUE;
 }
-
-if (isset($_GET["page"])) {
-  $current = $_GET["page"];
-} else {
-  $current = "home";
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title><?php print("audioBLAST! ".$current.$in_dev?" (DEV)":""); ?></title>
+  <title><?php print("audioBLAST! ".$current_page.($in_dev?" (DEV)":"")); ?></title>
 
   <link rel="stylesheet" href="ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
@@ -39,12 +35,13 @@ if (isset($_GET["page"])) {
   <h1>audioBLAST! Browser<?php print($in_dev?" (DEV)":"")?></h1>
   <div id="menu">
   <?php
-  if ($current == "home") {
+  if ($current_page == "home") {
     ?>
     <h2>Welcome to audioBLAST!</h2>
     <p>AudioBlast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
     <p>This website uses the <a href="https://api.audioblast.org">audioBlast API</a> which you can use to create your own projects.</p>
     <?php
+    include("home.php");
   } else {
     print("<ul class='ulhoriz'>");
     $types = json_decode(
@@ -52,25 +49,18 @@ if (isset($_GET["page"])) {
     foreach ($types as $type) {
       print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
     }
-    print("</ul>");
+    ?>
+    </ul>
+    <div id="data-table">
+    </div>
+    <script>
+      generateTabulator("#data-table", "<?php print($current_page); ?>");
+    </script>
+    <?php
   }
   ?>
   </div>
 </div>
 
-<?php
-if ($current == "home") {
-  include("home.php");
-} else {
-  ?>
-  <div id="data-table">
-  </div>
-  <script>
-    generateTabulator("#data-table", "<?php print($current); ?>");
-  </script>
-  <?php
-}
-?>
 </body>
-
 </html>
