@@ -10,7 +10,7 @@
         <a onclick="searchAudioBlast()">
           <img class="audioblast-button"
                src="https://cdn.audioblast.org/audioblast_flash_white.png"
-               alt="alphaBLAST! Search"/>
+               alt="audioBlast! Search"/>
         </a>
       </li>
     </ul>
