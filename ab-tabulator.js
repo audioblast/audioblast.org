@@ -1,3 +1,9 @@
+/**
+ * Create a Tabulator for data from audioBlast API
+ * @param  {String} element String specifying element to create Tabulator within
+ * @param  {String} table name of audioBlast table to retreieve data from
+ * @param  {Array}  iFilter initial filters to apply to the table
+ */
 var generateTabulator = function(element, table, iFilter=[]) {
   if (!Array.isArray(iFilter)) {
     iFilter = [iFilter];
@@ -72,6 +78,11 @@ var generateTabulator = function(element, table, iFilter=[]) {
   xhr.send(null);
 }
 
+/**
+ * Parse columns from audioBlast to add specific Tabulator behaviour
+ * @param  {Array} cols column information
+ * @return {Array} modified column data
+ */
 var parseColumns = function(cols) {
   for (var i = 0; i < cols.length; i++) {
     if (cols[i]["headerFilter"] == "range") {
@@ -82,6 +93,11 @@ var parseColumns = function(cols) {
   return(cols);
 }
 
+/**
+ * Helper function to  get field data from audioBlast column information
+ * @param  {Array} cols column information
+ * @return {Array} field information
+ */
 var columnFields = function(cols) {
   var names = [];
   for (var i = 0; i < cols.length; i++) {
@@ -140,7 +156,8 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
   return(container);
  }
 
-//Custom min/max filter function
+
+ //Custom min/max filter function
 function minMaxFilterFunction(headerValue, rowValue, rowData, filterParams){
   if (rowValue) {
     if (rowValue == null) {return false;}
