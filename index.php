@@ -35,8 +35,8 @@ if (isset($_GET["page"])) {
   if ($current == "home") {
     ?>
     <h2>Welcome to audioBLAST!</h2>
-    <p>Audioblast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
-    <p>This website uses the <a href="https://api.audioblast.org">audioBLAST API</a> which you can use to create your own projects.</p>
+    <p>AudioBlast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
+    <p>This website uses the <a href="https://api.audioblast.org">audioBlast API</a> which you can use to create your own projects.</p>
     <?php
   } else {
     print("<ul class='ulhoriz'>");
