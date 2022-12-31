@@ -181,9 +181,9 @@ const taxonSearch = {
     return(ret);
   },
   searchSuggest(){
-  return([
-    "Gryllotalpa vineae"
-  ]);
+    return([
+      "Gryllotalpa vineae"
+    ]);
   }
 }
 
@@ -280,7 +280,7 @@ const KSR = {
 }
 
 const emojiReplace = {
-  name:"Georgia",
+  name:"Rosetta",
   preParse(string, core) {
     if(string == "🦗")  {
       core.consoleLog(this.name, "Interpreted 🦗 as Orthoptera.");
