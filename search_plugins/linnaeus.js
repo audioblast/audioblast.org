@@ -45,13 +45,15 @@ const linnaeus = {
         "genus",
         "species"
       ];
+      const italicise = ["genus", "species"];
       var first = true;
       ranks.forEach(element => {
         if (this.data[element] != null) {
           if (!first) {
             ret += " > ";
           }
-          ret += '<a href="audioblast.php?taxon='+this.data[element]+'">'+this.data[element]+"</a>";
+          var name = italicise.includes(element) ? "<i>"+this.data[element]+"</i>" : this.data[element];
+          ret += '<a href="audioblast.php?taxon='+this.data[element]+'">'+name+"</a>";
           first = false;
         }
       });
