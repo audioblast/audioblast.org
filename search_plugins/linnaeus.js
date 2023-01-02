@@ -1,12 +1,17 @@
 // Provides a taxon information box where relevant
 const linnaeus = {
   name: "Linnaeus",
+  query: Promise.resolve(),
   displayPrototype() {
     const ret = {info:"linnaeus"};
     return(ret);
   },
 
   display(mode, matched, core) {
+    this.query.then(this.doDisplay(mode, matched, core));
+  },
+  doDisplay(mode, matched, core) {
+    if (matched.startsWith(":")) {return;}
     var dataRequested = fetch("https://api.audioblast.org/data/taxa/?taxon="+matched+"&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
@@ -37,7 +42,10 @@ const linnaeus = {
               first = false;
             }
           });
+          document.getElementById("linnaeus").style.display = "block";
           document.getElementById("linnaeus").innerHTML = ret+'<br>&nbsp;';
+        } else {
+          document.getElementById("linnaeus").style.display = "none";
         }
       })
       .catch(function (error) {

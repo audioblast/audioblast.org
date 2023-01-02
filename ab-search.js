@@ -36,10 +36,10 @@ const searchAB = {
     if (Object.keys(this.plugins[plugin.name]).includes('displayPrototype')) {
       const div_info = this.plugins[plugin.name].displayPrototype();
       if ("info" in div_info && document.getElementById(this.infoContainer)) {
-        document.getElementById(this.infoContainer).innerHTML += '<div id="'+div_info["info"]+'" class="feature"></div>';
+        document.getElementById(this.infoContainer).innerHTML += '<div id="'+div_info["info"]+'" class="feature"><div class="dot-carousel"></div></div>';
       }
       if ("content" in div_info && document.getElementById(this.contentContainer)) {
-        document.getElementById(this.contentContainer).innerHTML += '<div id="'+div_info["content"]+'" class="feature"></div>';
+        document.getElementById(this.contentContainer).innerHTML += '<div id="'+div_info["content"]+'" class="feature"><div class="dot-carousel"></div>';
       }
     }
   },
