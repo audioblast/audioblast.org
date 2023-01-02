@@ -1,7 +1,8 @@
+<?php include("includes/init.php"); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>audioBlast!</title>
+  <title>audioBlast!<?php print($in_dev?" (DEV)":"")?></title>
   <link rel="stylesheet" href="/ab-api.css">
   <link rel="stylesheet" href="https://view.audioblast.org/progress.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
@@ -13,7 +14,7 @@
 <body>
   <div id="title">
     <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
-    <h1>audioBlast</h1>
+    <h1>audioBlast<?php print($in_dev?" (DEV)":"")?></h1>
     <div id="menu">
       <div id="consoleContainer"></div>
     </div>
