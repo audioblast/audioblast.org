@@ -23,7 +23,6 @@ if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
 
   <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
   <script src="ab-tabulator.js"></script>
-  <script src="ab-search.js"></script>
 </head>
 
 <body>

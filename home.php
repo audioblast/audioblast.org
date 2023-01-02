@@ -20,15 +20,19 @@
     <div id="search-suggests-details"></div>
   </details>
 
+  <?php include("includes/load_search_js.php"); ?>
   <script>
+  document.addEventListener("DOMContentLoaded", function(event) {
     searchAB.searchSuggest("search-suggests-details");
+  });
+  </script>
+  <script>
     function searchAudioBlast() {
       const term = document.getElementById("search").value;
       window.open("audioblast.php/?search="+term, "_self");
     }
   </script>
 </div>
-
 
 <div class="feature-container">
   <div class="feature">
