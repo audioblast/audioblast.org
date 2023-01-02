@@ -68,7 +68,7 @@ const searchAB = {
   display(match) {
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
       if ('display' in Object.values(this.plugins)[i]) {
-        Object.values(this.plugins)[i].display(this.mode, match, this);
+        Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].display(this.mode, match, this));
       }
     }
   },

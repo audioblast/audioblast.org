@@ -12,10 +12,7 @@ const kingSolomonsRing = {
       }
     },
 
-    display(mode, matched, core) {
-      this.query.then(this.doDisplay(mode, matched));
-    },
-    doDisplay(mode, matched) {
+    display(mode, matched) {
       if (matched.startsWith(":named_trait_with_value:")) {
         document.getElementById("solomon").style.display = "block";
         parts = matched.split(":");

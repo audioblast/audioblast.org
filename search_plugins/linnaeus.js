@@ -8,9 +8,6 @@ const linnaeus = {
   },
 
   display(mode, matched, core) {
-    this.query.then(this.doDisplay(mode, matched, core));
-  },
-  doDisplay(mode, matched, core) {
     if (matched.startsWith(":")) {return;}
     var dataRequested = fetch("https://api.audioblast.org/data/taxa/?taxon="+matched+"&output=nakedJSON")
       .then(res => res.json())
