@@ -14,11 +14,13 @@
     <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
     <h1>audioBlast</h1>
     <div id="menu">
+      <div id="consoleContainer"></div>
     </div>
     
   </div>
-  <div id="search-results" class="feature-container">
-  </div>
+  <div id="infoContainer" class="feature-container"></div>
+  <div id="contentContainer" class="feature-container"></div>
+
   <script>
     document.addEventListener("DOMContentLoaded", function(event) {
       searchAB.init();

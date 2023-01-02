@@ -6,117 +6,84 @@ function arrayEquals(a, b) {
 }
 
 const searchAB = {
-  consoleContainer: "menu",
+  name: "audioBLAST",
+  consoleContainer: null,
+  infoContainer: null,
+  contentContainer: null,
   plugins: {},
-  name: "audioBLAST!",
-  mode: null,
-  matched: {},
-  parsedData: {},
-  parsed(plugin, mode, match) {
-    this.parsedData[plugin]= mode
-    if (mode != false) {
-      this.consoleLog(plugin, "I can interpret the search term.");
-      this.matched[mode] = match;
-      this.setMode(mode);
+  matched: [],
+  urlParams: new URLSearchParams(window.location.search),
+  mode: "search",
+
+  setConsoleContainerId(container) {
+    this.consoleContainer = container;
+  },
+  setInfoContainerId(container) {
+    this.infoContainer = container;
+  },
+  setContentContainerId(container) {
+    this.contentContainer = container;
+  },
+
+  consoleLog(plugin, message) {
+    if (!(this.consoleContainer == null)) {
+      document.getElementById(this.consoleContainer).innerHTML += "["+plugin+"] "+message+"<br>";
     }
-    this.allParsed();
   },
-  allParsed() {
-    if(Object.keys(this.plugins).length == Object.keys(this.parsedData).length) {
-      this.consoleLog(this.name, "All plugins have had the opportunity to parse the search term.");
-      this.display();
-    }
-  },
-  urlParams() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return(Array.from(urlParams.keys()));
-  },
+
   addPlugin(plugin) {
     this.plugins[plugin.name] = plugin;
-  },
-  preParse(string) {
-    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('preParse' in Object.values(this.plugins)[i]) {
-        string = Object.values(this.plugins)[i].preParse(string, this);
+    if (Object.keys(this.plugins[plugin.name]).includes('displayPrototype')) {
+      const div_info = this.plugins[plugin.name].displayPrototype();
+      if ("info" in div_info && document.getElementById(this.infoContainer)) {
+        document.getElementById(this.infoContainer).innerHTML += '<div id="'+div_info["info"]+'" class="feature"></div>';
       }
-    }
-    return(string);
-  },
-  canParse(string) {
-    string = this.preParse(string);
-    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('canParse' in Object.values(this.plugins)[i]) {
-        Object.values(this.plugins)[i].canParse(string, this);
+      if ("content" in div_info && document.getElementById(this.contentContainer)) {
+        document.getElementById(this.contentContainer).innerHTML += '<div id="'+div_info["content"]+'" class="feature"></div>';
       }
     }
   },
+
+  addMatch(match, module=null) {
+    this.matched.push(match);
+    this.consoleLog((module==null)?this.name:module, "New search term: "+match);
+    this.parse(match);
+    this.display(match);
+  },
+
+  init() {
+    this.consoleLog(this.name, "I can talk to the animals...");
+    //Set initial match 
+    this.addMatch(this.urlParams.get("search"));
+  },
+
+  parse(match) {
+    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
+      if ('parse' in Object.values(this.plugins)[i]) {
+        Object.values(this.plugins)[i].parse(this.mode, match, this);
+      }
+    }
+  },
+
+  display(match) {
+    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
+      if ('display' in Object.values(this.plugins)[i]) {
+        Object.values(this.plugins)[i].display(this.mode, match, this);
+      }
+    }
+  },
+
   searchSuggest(element) {
-    var suggestions = [];
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
       if ('searchSuggest' in Object.values(this.plugins)[i]) {
         var suggestion = Object.values(this.plugins)[i].searchSuggest();
         if (suggestion != false) {
           suggestion.forEach(e => {
-            suggestions.push(e);
+            html = '<a onclick="{'+"document.getElementById('search').value = '"+e+"';}"+'">'+e+"</a>";
+            document.getElementById(element).innerHTML += html;
           });
         }
       }
-    }
-    var html = '';
-    suggestions.forEach(e => {
-      html += '<a onclick="{'+
-        "document.getElementById('search').value = '"+e+"';}" + '">';
-      html += e
-      html += "</a>";
-    });
-    document.getElementById(element).innerHTML = html;
-  },
-  display() {
-    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('display' in Object.values(this.plugins)[i]) {
-        var response = Object.values(this.plugins)[i].display(this.mode, this.matched);
-        if (response != false) {
-          if ("html" in response) {
-            document.getElementById("search-results").innerHTML += response.html;
-          }
-          if ("js" in response) {
-            eval(response.js);
-          }
-        }
-      }
-    }
-  },
-
-  consoleLog(plugin, message) {
-    document.getElementById(this.consoleContainer).innerHTML += "["+plugin+"] "+message+"<br>";
-  },
-  setMode(mode) {
-    this.mode = mode;
-    this.consoleLog(this.name, "Set mode to: "+this.mode);
-  },
-  init() {
-    this.consoleLog(this.name, "I can talk to the animals...");
-    const urlParams = new URLSearchParams(window.location.search);
-
-    //If just search is set then need to figure out what plugins can process the search term
-    if (arrayEquals(this.urlParams(), ["search"])) {
-      this.setMode("audioBLAST!");
-      //See if any plugins can parse the search term
-      this.consoleLog(this.name, "Trying to parse search term.");
-      this.canParse(urlParams.get("search"));
-      return;
-    }
-
-    //See if other plugins provide matching URL params to set mode automatically
-    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('urlParams' in Object.values(this.plugins)[i]) {
-        if (arrayEquals(Object.values(this.plugins)[i].urlParams, this.urlParams())) {
-          this.consoleLog(this.name, "URL parameters match with plugin: "+Object.values(this.plugins)[i].name);
-          this.setMode(Object.values(this.plugins)[i].mode);
-          this.matched[this.mode] = this.preParse(urlParams.get(this.mode));
-        }
-      }
-    }
-    this.display();
-  },
+    }    
+  }
 }

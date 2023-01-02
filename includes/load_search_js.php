@@ -13,7 +13,11 @@
   <script type="text/javascript" src="/ab-search.js"></script>
   <script>
   document.addEventListener("DOMContentLoaded", function(event) {
-    <?php 
+  
+        searchAB.setConsoleContainerId("consoleContainer");
+        searchAB.setInfoContainerId("infoContainer");
+        searchAB.setContentContainerId("contentContainer");
+        <?php
     foreach ($plugins as $plugin) {
       echo "searchAB.addPlugin($plugin);\n";
     }

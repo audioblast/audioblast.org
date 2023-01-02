@@ -1,65 +1,49 @@
 // Provides a taxon information box where relevant
 const linnaeus = {
   name: "Linnaeus",
-  data: null,
-  canParse(string, core) {
-    var dataRequested = fetch("https://api.audioblast.org/data/taxa/?taxon="+string+"&output=nakedJSON")
+  displayPrototype() {
+    const ret = {info:"linnaeus"};
+    return(ret);
+  },
+
+  display(mode, matched, core) {
+    var dataRequested = fetch("https://api.audioblast.org/data/taxa/?taxon="+matched+"&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
-          this.data = data[0];
-          core.matched["rank"] = this.data["rank"].toLowerCase();
-          core.parsed(this.name, "taxon", string);
-          return;
+          taxon_info = data[0];
+          core.addMatch(":taxon_with_rank:"+taxon_info["taxon"]+":"+taxon_info["rank"], this.name);
+          var ret = '<h2>'+taxon_info["rank"]+": "+taxon_info["taxon"]+'</h2>';
+          const ranks = [
+            "kingdom",
+            "class",
+            "order",
+            "suborder",
+            "family",
+            "subfamily",
+            "tribe",
+            "genus",
+            "species"
+          ];
+          const italicise = ["genus", "species"];
+          var first = true;
+          ranks.forEach(element => {
+            if (taxon_info[element] != null) {
+              if (!first) {
+                ret += " > ";
+              }
+              var name = italicise.includes(element) ? "<i>"+taxon_info[element]+"</i>" : taxon_info[element];
+              ret += '<a href="audioblast.php?taxon='+taxon_info[element]+'">'+name+"</a>";
+              first = false;
+            }
+          });
+          document.getElementById("linnaeus").innerHTML = ret+'<br>&nbsp;';
         }
-        core.parsed(this.name, false);
       })
       .catch(function (error) {
     });
-    this.data = dataRequested;
-    return;
   },
-  urlParams: ["taxon"],
-  mode: "taxon",
-  display(mode, matched) {
-    if ("taxon" in matched) {
-      var ret = '<div id="search-result-taxon" class="feature">';
-      Promise.resolve(this.data).then(ret += this.displayTaxon(matched)
-      );
-      ret += "</div";
-      return({html:ret});
-    }
-    return(false);
-  },
-  displayTaxon(matched) {
-    if (this.data != null) {
-      var ret = '<h2>'+this.data["rank"]+": "+this.data["taxon"]+'</h2>';
-      const ranks = [
-        "kingdom",
-        "class",
-        "order",
-        "suborder",
-        "family",
-        "subfamily",
-        "tribe",
-        "genus",
-        "species"
-      ];
-      const italicise = ["genus", "species"];
-      var first = true;
-      ranks.forEach(element => {
-        if (this.data[element] != null) {
-          if (!first) {
-            ret += " > ";
-          }
-          var name = italicise.includes(element) ? "<i>"+this.data[element]+"</i>" : this.data[element];
-          ret += '<a href="audioblast.php?taxon='+this.data[element]+'">'+name+"</a>";
-          first = false;
-        }
-      });
-    }
-    return(ret);
-  },
+
   searchSuggest(){
     return([
       "Gryllotalpa vineae"

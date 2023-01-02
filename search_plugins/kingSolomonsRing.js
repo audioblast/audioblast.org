@@ -1,34 +1,62 @@
 const kingSolomonsRing = {
     name:"King Solomon's Ring",
-    canParse(string, core) {
-      var dataRequested = fetch("https://api.audioblast.org/data/traits/list_text_values/?output=nakedJSON")
+    displayPrototype() {
+      const ret = {content:"solomon"};
+      return(ret);
+    },
+
+    parse(mode, match, core) {
+      if (match == "silent") {
+        core.addMatch(":named_trait_with_value:Silent taxa:Sound Production Method:None", this.name);
+      }
+    },
+
+    display(mode, matched) {
+      if (matched.startsWith(":named_trait_with_value:")) {
+        parts = matched.split(":");
+        named_trait = parts[2];
+        trait = parts[3];
+        trait_value = parts[4];
+        var dataRequested = fetch("https://api.audioblast.org/data/traits/?trait="+trait+"&value="+trait_value+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
-          if (data.length > 0) {
-            if (data.includes(string.toLowerCase())) {
-              core.parsed(this.name, "trait.value", string);
-              return;
-            }
+          if (data.length == 1) {
+            document.getElementById("solomon").innerHTML = '<h2>'+named_trait+'</h2><div id="traits-tabulator" class="search-table"></div>';
+            eval('generateTabulator("#traits-tabulator", "traits", [{field:"trait", type:"=", value:"'+trait+'"},{field:"value", type:"=", value:"'+trait_value+'"}]);');
           }
-          core.parsed(this.name, false);
         })
-        .catch(function (error) {
-      });
-    },
-    display(mode, matched) {
-      if ("trait.value" in matched) {
-        var ret = '<div class="feature">';
-        var script = '';
-        ret += "<h2>"+matched["trait.value"]+"</h2>";
-        ret += '<div id="traitsvalue-tabulator" class="search-table"></div>';
-        script = 'generateTabulator("#traitsvalue-tabulator", "traits", {field:"value", type:"=", value:"'+matched["trait.value"]+'"});';
-        return({html:ret, js:script});
       }
-      return false;
+      //Match taxon
+      var dataRequested = fetch("https://api.audioblast.org/data/traits/?taxon="+matched+"&page_size=1&output=nakedJSON")
+      .then(res => res.json())
+      .then(data => {
+        if (data.length == 1) {
+          document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traits-tabulator" class="search-table"></div>';
+          eval('generateTabulator("#traits-tabulator", "traits", {field:"taxon", type:"=", value:"'+matched+'"});');
+        }
+      })
+      .catch(function (error) {
+      }); 
+
+      //Match trait value
+      var dataRequested = fetch("https://api.audioblast.org/data/traits/?value="+matched+"&page_size=1&output=nakedJSON")
+      .then(res => res.json())
+      .then(data => {
+        if (data.length == 1) {
+          document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traits-tabulator" class="search-table"></div>';
+          eval('generateTabulator("#traits-tabulator", "traits", {field:"value", type:"=", value:"'+matched+'"});');
+        }
+      })
+      .catch(function (error) {
+      }); 
     },
+
     searchSuggest(){
       return([
-        "mandibular grinding"
+        "mandibular grinding",
+        "tremulation",
+        "silent"
       ]);
     }
   }
+  
