@@ -33,7 +33,7 @@ const linnaeus = {
                 ret += " > ";
               }
               var name = italicise.includes(element) ? "<i>"+taxon_info[element]+"</i>" : taxon_info[element];
-              ret += '<a href="audioblast.php?taxon='+taxon_info[element]+'">'+name+"</a>";
+              ret += '<a href="audioblast.php?search=:taxon_with_rank:'+taxon_info[element]+':'+element+'">'+name+"</a>";
               first = false;
             }
           });
