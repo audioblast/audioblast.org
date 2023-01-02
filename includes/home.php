@@ -101,4 +101,11 @@
     <p>This project was conceived and developed by <a href="https://ebaker.me.uk">Ed Baker</a> as part of the Leverhulme Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
     <p>It is currently hosted by the Natural History Museum, London and developed (in part) as part of the <i>Urban Nature Project</i>.</p>
   </div>
+  <div class="feature">
+    <p>audioBlast makes use of the following open source projects:</p>
+    <ul>
+      <li><a href="https://tabulator.info/">Tabulator</a> - interactive tables on the web.</li>
+      <li><a href="https://github.com/edwbaker/PhyMoji-PHP">PhyMoji-PHP</a> - phylogenetic emoji support.</li>
+    </ul>
+  </div>
 </div>
