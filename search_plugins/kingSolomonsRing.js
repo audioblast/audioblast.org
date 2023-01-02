@@ -26,17 +26,21 @@ const kingSolomonsRing = {
           }
         })
       }
-      //Match taxon
-      var dataRequested = fetch("https://api.audioblast.org/data/traits/?taxon="+matched+"&page_size=1&output=nakedJSON")
-      .then(res => res.json())
-      .then(data => {
-        if (data.length == 1) {
-          document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traits-tabulator" class="search-table"></div>';
-          eval('generateTabulator("#traits-tabulator", "traits", {field:"taxon", type:"=", value:"'+matched+'"});');
-        }
-      })
-      .catch(function (error) {
-      }); 
+      if (matched.startsWith(":taxon_with_rank:")) {
+        parts = matched.split(":");
+        taxon = parts[2];
+        rank  = parts[3].toLowerCase();
+        var dataRequested = fetch("https://api.audioblast.org/data/traitstaxa/?"+rank+"="+taxon+"&page_size=1&output=nakedJSON")
+        .then(res => res.json())
+        .then(data => {
+          if (data.length == 1) {
+            document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traitstaxa-tabulator" class="search-table"></div>';
+            eval('generateTabulator("#traitstaxa-tabulator", "traitstaxa", {field:"'+rank+'", type:"=", value:"'+taxon+'"});');
+          }
+        })
+        .catch(function (error) {
+        }); 
+      }
 
       //Match trait value
       var dataRequested = fetch("https://api.audioblast.org/data/traits/?value="+matched+"&page_size=1&output=nakedJSON")
