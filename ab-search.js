@@ -15,7 +15,7 @@ const searchAB = {
   matched: Array(),
   urlParams: new URLSearchParams(window.location.search),
   query: Promise.resolve(),
-  query_remaining: new URLSearchParams(window.location.search).get("search"),
+  query_remaining: null,
   mode: "search",
 
   setConsoleContainerId(container) {
@@ -74,11 +74,14 @@ const searchAB = {
     }
   },
 
-  init() { 
-    this.consoleLog(this.name, "New query: "+this.urlParams.get("search"));
+  init() {
+    var query_string = this.urlParams.get("search");
+    query_string = query_string.replaceAll("?", "");
+    this.query_remaining = query_string;
+    this.consoleLog(this.name, "New query: "+query_string);
     this.query.then(d => {
-      this.parse(this.urlParams.get("search"));
-      this.display(this.urlParams.get("search"));
+      this.parse(query_string);
+      this.display(query_string);
     })
   },
 

@@ -12,15 +12,28 @@ const kingSolomonsRing = {
         core.replaceMatch("silent", ":'named_trait_with_value':'Silent taxa':'Sound Production Method':'None':", this.name);
         return;
       }
+
       //TODO: Below use text_traits API
-      this.query = fetch("https://api.audioblast.org/data/traits/?value="+match+"&page_size=1&output=nakedJSON")
-      .then(res => res.json())
-      .then(data => {
-        if (data.length == 1) {
-          core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-        }
-      })
-    },
+      this.query.then(d => {
+        fetch("https://api.audioblast.org/data/traits/?value="+match+"&page_size=1&output=nakedJSON")
+        .then(res => res.json())
+        .then(data => {
+          if (data.length == 1) {
+            core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
+          }
+        })
+      });
+
+      this.query.then(d => {
+        fetch("https://api.audioblast.org/data/traits/?trait="+match+"&page_size=1&output=nakedJSON")
+        .then(res => res.json())
+        .then(data => {
+          if (data.length == 1) {
+            core.replaceMatch(match, ":'trait':'"+match+"':", this.name);
+          }
+        })
+      });
+      },
 
     display(mode, matched, core) {
       var filters = Array();
@@ -43,6 +56,13 @@ const kingSolomonsRing = {
           title += parts[2].replaceAll("'", "")+" ";
           filters.push({
             field: "value",
+            type: "=",
+            value: parts[2].replaceAll("'", "")
+          });
+        } else if (parts[1] == "'trait'") {
+          title += parts[2].replaceAll("'", "")+" ";
+          filters.push({
+            field: "trait",
             type: "=",
             value: parts[2].replaceAll("'", "")
           });
