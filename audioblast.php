@@ -18,9 +18,14 @@
     <div id="menu">
       <div id="consoleContainer"></div>
     </div>
-    
   </div>
-  <div id="infoContainer" class="feature-container"></div>
+  
+  <div id="infoContainer" class="feature-container">
+    <div id="pythia" class="feature">
+      <div id="pythia-query"></div>
+      <div id="pythia-terms"></div>
+    </div>
+  </div>
   <div id="contentContainer" class="feature-container"></div>
 
   <script>

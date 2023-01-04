@@ -1,6 +1,7 @@
 const kingSolomonsRing = {
     name:"King Solomon's Ring",
     query: Promise.resolve(),
+    current_display: "",
     displayPrototype() {
       const ret = {content:"solomon"};
       return(ret);
@@ -8,60 +9,83 @@ const kingSolomonsRing = {
 
     parse(mode, match, core) {
       if (match == "silent") {
-        core.addMatch(":named_trait_with_value:Silent taxa:Sound Production Method:None", this.name);
+        core.replaceMatch("silent", ":'named_trait_with_value':'Silent taxa':'Sound Production Method':'None':", this.name);
+        return;
+      }
+      //TODO: Below use text_traits API
+      this.query = fetch("https://api.audioblast.org/data/traits/?value="+match+"&page_size=1&output=nakedJSON")
+      .then(res => res.json())
+      .then(data => {
+        if (data.length == 1) {
+          core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
+        }
+      })
+    },
+
+    display(mode, matched, core) {
+      var filters = Array();
+      var title = "";
+      matched.forEach(element => {
+        const parts = element.split(":");
+        if (parts[1] == "'named_trait_with_value'") {
+          title += parts[2].replaceAll("'", "")+" ";
+          filters.push({
+            field: "trait",
+            type: "=",
+            value: parts[3].replaceAll("'", "")
+          });
+          filters.push({
+            field: "value",
+            type: "=",
+            value: parts[4].replaceAll("'", "")
+          });
+        } else if (parts[1] == "'trait_value'") {
+          title += parts[2].replaceAll("'", "")+" ";
+          filters.push({
+            field: "value",
+            type: "=",
+            value: parts[2].replaceAll("'", "")
+          });
+        } else if (parts[1] == "'taxon_with_rank'") {
+          title += parts[2].replaceAll("'", "")+" ";
+          filters.push({
+            field: parts[3].replaceAll("'", ""),
+            type: "=",
+            value: parts[2].replaceAll("'", "")
+          });
+        }
+      });
+      if (title + JSON.stringify(filters) == this.current_display) {
+        return;
+      } else {
+        this.traitsDisplay(title, filters);
+        this.current_display = title + JSON.stringify(filters);
       }
     },
 
-    display(mode, matched) {
-      if (matched.startsWith(":named_trait_with_value:")) {
-        document.getElementById("solomon").style.display = "block";
-        parts = matched.split(":");
-        named_trait = parts[2];
-        trait = parts[3];
-        trait_value = parts[4];
-        this.query = dataRequested = fetch("https://api.audioblast.org/data/traits/?trait="+trait+"&value="+trait_value+"&page_size=1&output=nakedJSON")
-        .then(res => res.json())
-        .then(data => {
-          if (data.length == 1) {
-            document.getElementById("solomon").innerHTML = '<h2>'+named_trait+'</h2><div id="traits-tabulator" class="search-table"></div>';
-            eval('generateTabulator("#traits-tabulator", "traits", [{field:"trait", type:"=", value:"'+trait+'"},{field:"value", type:"=", value:"'+trait_value+'"}]);');
-          } else {
-            document.getElementById("solomon").style.display = "none";
-          }
-        })
-      } else if (matched.startsWith(":taxon_with_rank:")) {
-        document.getElementById("solomon").style.display = "block";
-        parts = matched.split(":");
-        taxon = parts[2];
-        rank  = parts[3].toLowerCase();
-        this.query = fetch("https://api.audioblast.org/data/traitstaxa/?"+rank+"="+taxon+"&page_size=1&output=nakedJSON")
-        .then(res => res.json())
-        .then(data => {
-          if (data.length == 1) {
-            document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traitstaxa-tabulator" class="search-table"></div>';
-            eval('generateTabulator("#traitstaxa-tabulator", "traitstaxa", {field:"'+rank+'", type:"=", value:"'+taxon+'"});');
-          } else {
-            document.getElementById("solomon").style.display = "none";
-          }
-        })
-        .catch(function (error) {
-        }); 
-      } else {
-      //Match trait value
-      document.getElementById("solomon").style.display = "block";
-        this.query = fetch("https://api.audioblast.org/data/traits/?value="+matched+"&page_size=1&output=nakedJSON")
-        .then(res => res.json())
-        .then(data => {
-          if (data.length == 1) {
-            document.getElementById("solomon").innerHTML = '<h2>Traits</h2><div id="traits-tabulator" class="search-table"></div>';
-            eval('generateTabulator("#traits-tabulator", "traits", {field:"value", type:"=", value:"'+matched+'"});');
-          } else {
-            //document.getElementById("solomon").style.display = "none";
-          }
-        })
-        .catch(function (error) {
-        }); 
-      }
+    traitsDisplay(title, filters) {
+      var params = "";
+      var first = true;
+      filters.forEach(element => {
+        if (first) {
+          params += '?';
+          first = false;
+        } else {
+          params += '&';
+        }
+        params += element.field+"="+element.value;
+      })
+
+      this.query = dataRequested = fetch("https://api.audioblast.org/data/traits/"+params+"&page_size=1&output=nakedJSON")
+      .then(res => res.json())
+      .then(data => {
+        if (data.length == 1) {
+          document.getElementById("solomon").innerHTML = '<h2>'+title+'</h2><div id="traits-tabulator" class="search-table"></div>';
+          eval('generateTabulator("#traits-tabulator", "traitstaxa",'+JSON.stringify(filters)+');');
+        } else {
+          document.getElementById("solomon").style.display = "none";
+        }
+      })
     },
 
     searchSuggest(){

@@ -10,9 +10,12 @@ const searchAB = {
   consoleContainer: null,
   infoContainer: null,
   contentContainer: null,
+  pythiaContainer: "pythia",
   plugins: {},
-  matched: [],
+  matched: Array(),
   urlParams: new URLSearchParams(window.location.search),
+  query: Promise.resolve(),
+  query_remaining: new URLSearchParams(window.location.search).get("search"),
   mode: "search",
 
   setConsoleContainerId(container) {
@@ -44,33 +47,58 @@ const searchAB = {
     }
   },
 
-  addMatch(match, module=null) {
-    this.matched.push(match);
-    this.consoleLog((module==null)?this.name:module, "New search term: "+match);
-    this.parse(match);
-    this.display(match);
+  replaceMatch(old_match, new_match, module=null) {
+    if (this.matched.includes(new_match)) {return;}
+    if (!this.matched.includes(old_match)) {this.matched.push(old_match);}
+    const index = this.matched.indexOf(old_match);
+    this.matched[index] = new_match
+    this.consoleLog((module==null)?this.name:module, "Replaced match: "+old_match+" with "+new_match);
+
+    if (!document.getElementById("pythia-term-"+encodeURI(old_match))) {
+      document.getElementById("pythia-terms").innerHTML += '<div id="pythia-term-'+encodeURI(old_match)+'">'+old_match+'</div>';
+    }
+    document.getElementById("pythia-term-"+encodeURI(old_match)).innerHTML += ' => <span id="pythia-term-'+encodeURI(new_match)+'">'+new_match+'</div>';
+  
+    this.query_remaining = this.query_remaining.replaceAll(old_match, "");
+    this.query_remaining = this.query_remaining.replaceAll(new_match, "").trim();
+
+    this.query.then(d => {
+      this.parse(new_match);
+      this.display(new_match);
+    });
+
+
+    if (this.query_remaining != "") {
+      this.parse(this.query_remaining);
+      this.display(this.query_remaining);
+    }
   },
 
-  init() {
-    this.consoleLog(this.name, "I can talk to the animals...");
-    //Set initial match 
-    this.addMatch(this.urlParams.get("search"));
+  init() { 
+    this.consoleLog(this.name, "New query: "+this.urlParams.get("search"));
+    this.query.then(d => {
+      this.parse(this.urlParams.get("search"));
+      this.display(this.urlParams.get("search"));
+    })
   },
 
   parse(match) {
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
       if ('parse' in Object.values(this.plugins)[i]) {
-        Object.values(this.plugins)[i].parse(this.mode, match, this);
+        this.query.then(Object.values(this.plugins)[i].parse(this.mode, match, this));
       }
     }
   },
 
   display(match) {
-    for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('display' in Object.values(this.plugins)[i]) {
-        Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].display(this.mode, match, this));
+    this.pythia(match);
+    this.query.then(d => {
+      for (var i = 0; i < Object.keys(this.plugins).length; i++) {
+        if ('display' in Object.values(this.plugins)[i]) {
+          this.query.then(Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].display(this.mode, this.matched, this)));
+        }
       }
-    }
+    })
   },
 
   searchSuggest(element) {
@@ -85,5 +113,28 @@ const searchAB = {
         }
       }
     }    
+  },
+
+  pythiaQueryCount: 0,
+  pythia(match) {
+    if (this.pythiaQueryCount == 0) {
+      document.getElementById("pythia-query").innerHTML = this.urlParams.get("search");
+    }
+    this.pythiaQueryCount++;
+    match = match.replace(/(:'([A-z]| |_)+')+:/, "");
+    
+    this.query = fetch("https://api.audioblast.org/standalone/pythia/process/?query="+match)
+      .then(res => res.json())
+      .then(data => {
+        data = data.data;
+
+        if ("taxa" in data) {
+          data.taxa.forEach(element => {
+            this.replaceMatch(element.match, ":'taxon':'"+element.match+"':", "Pythia");
+          });
+        }
+      })
+      .catch(function (error) {
+      }); 
   }
 }
