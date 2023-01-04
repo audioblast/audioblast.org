@@ -16,13 +16,20 @@
     <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
     <h1>audioBlast<?php print($in_dev?" (DEV)":"")?></h1>
     <div id="menu">
-      <div id="consoleContainer"></div>
+      <details>
+        <summary>Show search console</summary>
+        <div id="consoleContainer"></div>
+      </details>
     </div>
   </div>
   
   <div id="infoContainer" class="feature-container">
     <div id="pythia" class="feature">
-      <div id="pythia-query"></div>
+      <h1 id="pythia-query"></h1>
+      <details id="pythia-query-details">
+        <summary>Show replacement patterns</summary>
+        <div id="pythia-terms"></div>
+      </details>
       <div id="pythia-terms"></div>
     </div>
   </div>
