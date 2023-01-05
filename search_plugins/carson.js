@@ -8,12 +8,12 @@ const carson = {
     match = match.toLowerCase();
     const parts = match.split(" ");
     parts.forEach(match => {
-      if (match.toLowerCase().startsWith("tremulati")) {
-        core.replaceMatch(match, "tremulation", this.name);
+      if (match.toLowerCase().startsWith("tremulat")) {
+        core.replaceMatch(match, "Tremulation", this.name);
         return;
       }
-      if (match.toLowerCase().startsWith("crepitati")) {
-        core.replaceMatch(match, "crepitation", this.name);
+      if (match.toLowerCase().startsWith("crepitat")) {
+        core.replaceMatch(match, "Crepitation", this.name);
         return;
       }
     });
