@@ -33,6 +33,8 @@ const carson = {
 
   },
 
+  display() {},
+
   searchSuggest(){
     return([
       "How far away can you hear bullacris membracioides?"

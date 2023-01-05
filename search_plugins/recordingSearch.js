@@ -7,6 +7,8 @@ const recordingSearch = {
     return(ret);
   },
 
+  parse() {},
+
   display(mode, matched, core) {
     var recordings = Array();
     matched.forEach(element => {

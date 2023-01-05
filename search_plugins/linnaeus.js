@@ -8,6 +8,8 @@ const linnaeus = {
     return(ret);
   },
 
+  parse() {},
+
   display(mode, matched, core) {
     var taxa = Array();
     matched.forEach(element => {

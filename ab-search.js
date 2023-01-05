@@ -13,6 +13,7 @@ const searchAB = {
   pythiaContainer: "pythia",
   plugins: {},
   matched: Array(),
+  old_matches: Array(),
   urlParams: new URLSearchParams(window.location.search),
   query: Promise.resolve(),
   query_remaining: null,
@@ -49,7 +50,10 @@ const searchAB = {
 
   replaceMatch(old_match, new_match, module=null) {
     if (this.matched.includes(new_match)) {return;}
+    if (this.old_matches.includes(old_match)) {return;}
+
     if (!this.matched.includes(old_match)) {this.matched.push(old_match);}
+    this.old_matches.push(old_match);
     const index = this.matched.indexOf(old_match);
     this.matched[index] = new_match
     this.consoleLog((module==null)?this.name:module, "Replaced match: "+old_match+" with "+new_match);
@@ -87,15 +91,13 @@ const searchAB = {
 
   parse(match) {
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
-      if ('parse' in Object.values(this.plugins)[i]) {
-        this.query.then(Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].parse(this.mode, match, this)));
-      }
+      this.query.then(Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].parse(this.mode, match, this)));
     }
   },
 
   display(match) {
     this.pythia(match);
-    this.query.then(d => {
+    this.query.then(e => {
       for (var i = 0; i < Object.keys(this.plugins).length; i++) {
         if ('display' in Object.values(this.plugins)[i]) {
           this.query.then(Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].display(this.mode, this.matched, this)));
