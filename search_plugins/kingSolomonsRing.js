@@ -3,7 +3,7 @@ const kingSolomonsRing = {
     query: Promise.resolve(),
     current_display: "",
     displayPrototype() {
-      const ret = {content:"solomon"};
+      const ret = {info: "susie", content:"solomon"};
       return(ret);
     },
 
@@ -59,27 +59,42 @@ const kingSolomonsRing = {
             type: "=",
             value: parts[2].replaceAll("'", "")
           });
-        } else if (parts[1] == "'trait'") {
-          title += parts[2].replaceAll("'", "")+" ";
-          filters.push({
-            field: "trait",
-            type: "=",
-            value: parts[2].replaceAll("'", "")
-          });
-        } else if (parts[1] == "'taxon_with_rank'") {
-          const italicise = ['genus', 'species'];
-          if (italicise.includes(parts[3].replaceAll("'", ""))) {
-            title += "<i>"+parts[2].replaceAll("'", "")+"</i>";
-          } else {
+          this.query = fetch("https://vocab.acousti.cloud/api/term/?shortname="+parts[2].replaceAll("'", ""))
+          .then(res => res.json())
+          .then(data => {
+            if (data != null) {
+              $html  = "<h2>"+data.name+"</h2>";
+              $html += "<p>"+data.description+"</p>";
+              $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
+              document.getElementById("susie").style.display = "block";
+              document.getElementById("susie").innerHTML = $html;
+            } else {
+              document.getElementById("susie").style.display = "none";
+            }
+          })
+          .catch(function (error) {
+        });
+          } else if (parts[1] == "'trait'") {
             title += parts[2].replaceAll("'", "")+" ";
+            filters.push({
+              field: "trait",
+              type: "=",
+              value: parts[2].replaceAll("'", "")
+            });
+          } else if (parts[1] == "'taxon_with_rank'") {
+            const italicise = ['genus', 'species'];
+            if (italicise.includes(parts[3].replaceAll("'", ""))) {
+              title += "<i>"+parts[2].replaceAll("'", "")+"</i>";
+            } else {
+              title += parts[2].replaceAll("'", "")+" ";
+            }
+            filters.push({
+              field: parts[3].replaceAll("'", ""),
+              type: "=",
+              value: parts[2].replaceAll("'", "")
+            });
           }
-          filters.push({
-            field: parts[3].replaceAll("'", ""),
-            type: "=",
-            value: parts[2].replaceAll("'", "")
-          });
-        }
-      });
+        });
       if (title + JSON.stringify(filters) == this.current_display) {
         return;
       } else {
