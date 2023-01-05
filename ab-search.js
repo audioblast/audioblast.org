@@ -88,7 +88,7 @@ const searchAB = {
   parse(match) {
     for (var i = 0; i < Object.keys(this.plugins).length; i++) {
       if ('parse' in Object.values(this.plugins)[i]) {
-        this.query.then(Object.values(this.plugins)[i].parse(this.mode, match, this));
+        this.query.then(Object.values(this.plugins)[i].query.then(Object.values(this.plugins)[i].parse(this.mode, match, this)));
       }
     }
   },
