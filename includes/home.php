@@ -1,13 +1,14 @@
-<div class="home-search">
+<div class="home-search" role="search">
   <label for="search" id="search-label">Search</label>
   <input id="search"
          placeholder="Search..."
+         aria-label="Enter search terms" 
          autocomplete="off"
          onkeydown="if (event.keyCode == 13) { searchAudioBlast(); }">
   <div id="zoom-control" class="search-control">
     <ul class="ulhoriz">
       <li>
-        <a onclick="searchAudioBlast()">
+        <a aria-label="Click here to search" onclick="searchAudioBlast()">
           <img class="audioblast-button"
                src="https://cdn.audioblast.org/audioblast_flash_white.png"
                alt="audioBlast! Search"/>
@@ -34,7 +35,7 @@
   </script>
 </div>
 
-<div class="feature-container">
+<div class="feature-container" role="main">
   <div class="feature">
     <h3><a href="/?page=recordings" id="recordings"></a></h3>
     <p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
@@ -93,7 +94,7 @@
   </div>
 </div>
 
-<div class="feature-container">
+<div class="feature-container" role="contentinfo">
   <div class="feature">
     <h2>Credits</h2>
   </div>

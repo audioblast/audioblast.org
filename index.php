@@ -13,7 +13,7 @@
 </head>
 
 <body>
-<div id="title">
+<div id="title" role="banner">
   <a href="/">
     <img src="https://cdn.audioblast.org/audioblast_flash.png"
     alt="audioBlast flash logo"
@@ -25,10 +25,10 @@
     include("includes/welcome.php");
     ?>
     </div></div>
-<?php
-  include("includes/home.php");
+    <?php
+    include("includes/home.php");
   } else {
-    print("<ul class='ulhoriz'>");
+    print("<ul class='ulhoriz' role='navigation'>");
     $types = json_decode(
       file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
     foreach ($types as $type) {
@@ -36,7 +36,7 @@
     }
     ?>
     </ul>
-    <div id="data-table">
+    <div id="data-table" role="main">
     </div>
     <script>
       generateTabulator("#data-table", "<?php print($current_page); ?>");
