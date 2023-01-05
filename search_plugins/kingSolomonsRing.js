@@ -67,7 +67,12 @@ const kingSolomonsRing = {
             value: parts[2].replaceAll("'", "")
           });
         } else if (parts[1] == "'taxon_with_rank'") {
-          title += parts[2].replaceAll("'", "")+" ";
+          const italicise = ['genus', 'species'];
+          if (italicise.includes(parts[3].replaceAll("'", ""))) {
+            title += "<i>"+parts[2].replaceAll("'", "")+"</i>";
+          } else {
+            title += parts[2].replaceAll("'", "")+" ";
+          }
           filters.push({
             field: parts[3].replaceAll("'", ""),
             type: "=",
