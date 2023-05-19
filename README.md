@@ -3,6 +3,33 @@
 ## Branches
 The current web version is `release`.
 
+## Search helpers
+
+### Pythia
+Uses the audioBlast API to identify strings that match taxa within the search query.
+
+Named after the Oracle of Apollo at Delphi.
+
+### Carson
+Makes Englsh terms in search queries tidy.
+
+Named after Mr Carson from Downton Abbey.
+
+### King Solomon's Ring
+Processes terms relating to acoustic traits.
+
+Named after the book by Konrad Lorenz.
+
+### Linnaeus
+Processes terms relating to taxonomic names.
+
+### Rosetta
+Processes any emoji in searh terms.
+
+Named after the Rosetta Stone.
+
+
+
 ## Credits
 Initial development of audioBLAST was supported by the Leverhulme Trust funded Automated Acoustic Observatories project at the University of York.
 
