@@ -55,7 +55,7 @@ const kingSolomonsRing = {
             type: "=",
             value: parts[4].replaceAll("'", "")
           });
-          this.query = fetch("https://vocab.acousti.cloud/api/term/?shortname="+parts[3].replaceAll("'", ""))
+          this.query = fetch("https://vocab.audioblast.org/api/term/?shortname="+parts[3].replaceAll("'", ""))
           .then(res => res.json())
           .then(data => {
             if (data != null) {
@@ -77,7 +77,7 @@ const kingSolomonsRing = {
             type: "=",
             value: parts[2].replaceAll("'", "")
           });
-          this.query = fetch("https://vocab.acousti.cloud/api/term/?shortname="+parts[2].replaceAll("'", ""))
+          this.query = fetch("https://vocab.audioblast.org/api/term/?shortname="+parts[2].replaceAll("'", ""))
           .then(res => res.json())
           .then(data => {
             if (data != null) {
