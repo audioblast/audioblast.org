@@ -3,6 +3,11 @@
 $in_dev = FALSE;
 $current_page = isset($_GET["page"]) ? $_GET["page"] : "home";
 
+if ($current_page == "ping") {
+  echo "pong";
+  exit;
+}
+
 // If running in dev environment show errors
 if ($_SERVER['SERVER_NAME'] == 'ab.acousti.cloud') {
   ini_set('display_errors', 1);
