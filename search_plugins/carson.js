@@ -4,6 +4,7 @@ const carson = {
   parse(mode, match, core) {
     this.query.then(this.doParse(mode, match, core));
   },
+  
   doParse(mode, match, core) {
     match = match.toLowerCase();
     const parts = match.split(" ");
