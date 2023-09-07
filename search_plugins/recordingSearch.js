@@ -1,3 +1,12 @@
+/*
+Watson search plugin for searchAB
+
+The Watson plugin for searchAB is a plugin that processes the user's search query for recordings matching
+the query. The recordings box is displayed if matches are found.
+
+The plugin is named after Chris Watson, a sound recordist who has worked on many David Attenborough
+nature documentaries.
+*/
 const recordingSearch = {
   name:"Watson",
   query: Promise.resolve(),

@@ -1,3 +1,18 @@
+/*
+King Solomon's Ring (KSR) plugin for searchAB
+
+KSR is a plugin for searchAB that processes the user's search query for traits against 
+the audioBlast vocabulary.
+
+It displays the traits box (using the traits-taxa SQL view exposed via the audioBlast
+API) if matches are found.
+
+KSR is named after the book by Konrad Lorenz, King Solomon's Ring, in which he
+describes his experiments with jackdaws and their vocalisations. He describes
+how he was able to identify individual jackdaws by their vocalisations and
+how he was able to identify the meaning of the vocalisations.
+*/
+
 const kingSolomonsRing = {
     name:"King Solomon's Ring",
     query: Promise.resolve(),

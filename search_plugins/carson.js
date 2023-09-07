@@ -1,3 +1,17 @@
+/*
+Carson plugin for searchAB
+
+The Carson plugin for searchAB is a plugin that tidies the user's search query in
+order to alow for further processing. As an example it will process the term 
+"tremulating orthoptera" to "tremulation" which has a direct match in the audioBlast
+vocabulary. A second example is converting the user query "how far can you hear" to the
+vocabulary term "sound propagation distance" which has a direct match in the audioBlast
+vocabulary.
+
+The plugin is named after Mr Carson, the butler in Downton Abbey, who is known for his
+tidiness and attention to detail.
+*/
+
 const carson = {
   name:"Carson",
   query:  Promise.resolve(),

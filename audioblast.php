@@ -4,6 +4,9 @@ audioBlast Search
 
 This page is for the audioBlast search interface. It is a single page app that uses the audioBlast 
 API to search for recordings, annotations and traits.
+
+The search functionality is primarily performed in JavaScript, with the PHP code only used to
+initialise the page.
 */
 
 // Initial configurtion and quick return if ping page

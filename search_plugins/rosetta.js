@@ -1,3 +1,11 @@
+/*
+Rosetta search plugin for searchAB
+
+The Rosetta plugin for searchAB is a plugin that processes the user's search query for emoji
+and attempts to match the emoji to a taxon using Phymoji.
+
+The plugin is named after the Rosetta Stone, which was used to decipher Egyptian hieroglyphics.
+*/
 const rosetta = {
   name:"Rosetta",
   query: Promise.resolve(),
