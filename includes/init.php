@@ -3,6 +3,8 @@
 $in_dev = FALSE;
 $current_page = isset($_GET["page"]) ? $_GET["page"] : "home";
 
+// If ping page, return pong. This is used by status.acousti.cloud to check that
+// the server is up and returning HTML.
 if ($current_page == "ping") {
   echo "pong";
   exit;

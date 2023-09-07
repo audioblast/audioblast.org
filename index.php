@@ -4,10 +4,8 @@
 
 <head>
   <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
-
   <link rel="stylesheet" href="ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-
   <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
   <script src="ab-tabulator.js"></script>
 </head>
