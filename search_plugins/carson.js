@@ -42,7 +42,7 @@ const carson = {
       return;
     }
     if (match.includes("what frequency")) {
-        core.replaceMatch("what frequency", "Peak Frequency (kHz)", this.name);
+        core.replaceMatch("what frequency", ":'trait':'Peak Frequency (kHz)':", this.name);
         return;
       }
 
@@ -52,7 +52,8 @@ const carson = {
 
   searchSuggest(){
     return([
-      "How far away can you hear bullacris membracioides?"
+      "How far away can you hear bullacris membracioides?",
+      "What frequency is Gryllotalpa vineae?"
     ]);
   }
 }
