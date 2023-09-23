@@ -18,8 +18,7 @@ const kingSolomonsRing = {
     query: Promise.resolve(),
     current_display: "",
     displayPrototype() {
-      const ret = {info: "susie", content:"solomon"};
-      return(ret);
+      return {info: "susie", content: "solomon"};
     },
 
     parse(mode, match, core) {
@@ -119,18 +118,9 @@ const kingSolomonsRing = {
     },
 
     traitsDisplay(title, filters) {
-      var params = "";
-      var first = true;
-      if (filters.length == 0) { return; }
-      filters.forEach(element => {
-        if (first) {
-          params += '?';
-          first = false;
-        } else {
-          params += '&';
-        }
-        params += element.field+"="+element.value;
-      })
+      if (filters.length === 0) { return; }
+      let params = filters.map(element => `${element.field}=${element.value}`).join('&');
+      params = `?${params}`;
 
       this.query = dataRequested = fetch("https://api.audioblast.org/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
