@@ -132,7 +132,7 @@ const kingSolomonsRing = {
         params += element.field+"="+element.value;
       })
 
-      this.query = dataRequested = fetch("https://api.audioblast.org/data/traits/"+params+"&page_size=1&output=nakedJSON")
+      this.query = dataRequested = fetch("https://api.audioblast.org/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
