@@ -34,11 +34,11 @@ const carson = {
     });
 
     if (match.includes("how far")) {
-      core.replaceMatch("how far", "Sound propagation distance (m)", this.name);
+      core.replaceMatch("how far", ":'trait':'Sound propagation distance (m)':", this.name);
       return;
     }
     if (match.includes("what distance")) {
-      core.replaceMatch("what distance", "Sound propagation distance (m)", this.name);
+      core.replaceMatch("what distance", "'trait':'Sound propagation distance (m)':", this.name);
       return;
     }
     if (match.includes("what frequency")) {
