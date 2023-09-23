@@ -26,8 +26,8 @@ const rosetta = {
   display() {},
   searchSuggest() {
     return([
-      "🦗",
-      "🐜"
+      "🦗 ",
+      "🐜 "
     ]);
   }
 }
