@@ -18,10 +18,9 @@
     <div class="feature">
       <h2>Development</h2>
       <h3>Automated Acoustic Observatories</h3>
-      <p>The audioBlast infrastructure was originally implemented to internally support the Leverhulme
-         Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
+      <p>The audioBlast infrastructure was originally implemented by <a href="https://ebaker.me.uk">Ed Baker</a> to internally support the Leverhulme Trust funded <a href="https://ebaker.me.uk/aao">Automated Acoustic Observatories</a> project at the University of York.</p>
       <h3>Urban Nature Project</h3>
-      <p>Part of the current development cycle is supported by the <i>Urban Nature Project</i> at <thead>
+      <p>Part of the current development cycle is supported by the <i>Urban Nature Project</i> at the
          Natural History Museum, London.</p>
       <h3>GitHub</h3>
       <p>You can contribute to the project at the <a href="https://github.com/audioblast">audioBlast

@@ -1,3 +1,18 @@
+/*
+King Solomon's Ring (KSR) plugin for searchAB
+
+KSR is a plugin for searchAB that processes the user's search query for traits against 
+the audioBlast vocabulary.
+
+It displays the traits box (using the traits-taxa SQL view exposed via the audioBlast
+API) if matches are found.
+
+KSR is named after the book by Konrad Lorenz, King Solomon's Ring, in which he
+describes his experiments with jackdaws and their vocalisations. He describes
+how he was able to identify individual jackdaws by their vocalisations and
+how he was able to identify the meaning of the vocalisations.
+*/
+
 const kingSolomonsRing = {
     name:"King Solomon's Ring",
     query: Promise.resolve(),
@@ -24,6 +39,20 @@ const kingSolomonsRing = {
         })
       });
 
+      this.query = fetch("https://vocab.audioblast.org/api/term/?shortname="+match)
+      .then(res => res.json())
+      .then(data => {
+        if (data != null) {
+          core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
+          $html  = "<h2>"+data.name+"</h2>";
+          $html += "<p>"+data.description+"</p>";
+          $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
+          document.getElementById("susie").style.display = "block";
+          document.getElementById("susie").innerHTML = $html;
+        } 
+      })
+
+
       this.query.then(d => {
         fetch("https://api.audioblast.org/data/traits/?trait="+match+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
@@ -35,10 +64,7 @@ const kingSolomonsRing = {
       });
       },
 
-    display(mode, matched, core) {
-      //Todo: remove when all ifs deal with vocab API
-      document.getElementById("susie").style.display = "none";
-      
+    display(mode, matched, core) {      
       var filters = Array();
       var title = "";
       matched.forEach(element => {
@@ -55,42 +81,13 @@ const kingSolomonsRing = {
             type: "=",
             value: parts[4].replaceAll("'", "")
           });
-          this.query = fetch("https://vocab.acousti.cloud/api/term/?shortname="+parts[3].replaceAll("'", ""))
-          .then(res => res.json())
-          .then(data => {
-            if (data != null) {
-              $html  = "<h2>"+data.name+"</h2>";
-              $html += "<p>"+data.description+"</p>";
-              $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
-              document.getElementById("susie").style.display = "block";
-              document.getElementById("susie").innerHTML = $html;
-            } else {
-              document.getElementById("susie").style.display = "none";
-            }
-          })
-          .catch(function (error) {
-          });
+
         } else if (parts[1] == "'trait_value'") {
           title += parts[2].replaceAll("'", "")+" ";
           filters.push({
             field: "value",
             type: "=",
             value: parts[2].replaceAll("'", "")
-          });
-          this.query = fetch("https://vocab.acousti.cloud/api/term/?shortname="+parts[2].replaceAll("'", ""))
-          .then(res => res.json())
-          .then(data => {
-            if (data != null) {
-              $html  = "<h2>"+data.name+"</h2>";
-              $html += "<p>"+data.description+"</p>";
-              $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
-              document.getElementById("susie").style.display = "block";
-              document.getElementById("susie").innerHTML = $html;
-            } else {
-              document.getElementById("susie").style.display = "none";
-            }
-          })
-          .catch(function (error) {
           });
         } else if (parts[1] == "'trait'") {
             title += parts[2].replaceAll("'", "")+" ";
@@ -124,6 +121,7 @@ const kingSolomonsRing = {
     traitsDisplay(title, filters) {
       var params = "";
       var first = true;
+      if (filters.length == 0) { return; }
       filters.forEach(element => {
         if (first) {
           params += '?';

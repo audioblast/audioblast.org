@@ -79,6 +79,10 @@ summary {
   cursor:pointer;
 }
 
+#susie {
+  display: none;
+}
+
 #search-suggests-details a {
   cursor: pointer;
   border-radius:3px;

@@ -81,6 +81,7 @@ const searchAB = {
   init() {
     var query_string = this.urlParams.get("search");
     query_string = query_string.replaceAll("?", "");
+
     this.query_remaining = query_string;
     this.consoleLog(this.name, "New query: "+query_string);
     this.query.then(d => {

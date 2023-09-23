@@ -1,3 +1,13 @@
+/*
+Linnaeus plugin for searchAB.
+
+The Linnaeus plugin for searchAB is a plugin that identifies any taxa in  the user's search query
+(i.e. the :taxon: tag is applied) and provides information about the taxon in the taxon box. Typically
+the tagged strings are generated from Pythia previously processing the user's query.
+
+The plugin is named after Carl Linnaeus, the father of modern taxonomy.
+*/
+
 // Provides a taxon information box where relevant
 const linnaeus = {
   name: "Linnaeus",
