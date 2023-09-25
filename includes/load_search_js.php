@@ -10,7 +10,9 @@
     echo '"/></script>'."\n";
   }
 ?>
+
 <script type="text/javascript" src="/ab-search.js"></script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function(event) {
     //Configure searchAB to match page DOM

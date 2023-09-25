@@ -42,9 +42,9 @@ const carson = {
       return;
     }
     if (match.includes("what frequency")) {
-        core.replaceMatch("what frequency", ":'trait':'Peak Frequency (kHz)':", this.name);
-        return;
-      }
+      core.replaceMatch("what frequency", ":'trait':'Peak Frequency (kHz)':", this.name);
+      return;
+    }
 
   },
 
