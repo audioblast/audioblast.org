@@ -39,20 +39,22 @@ const kingSolomonsRing = {
       });
 
       
-      /**
-      this.query = fetch("https://vocab.audioblast.org/api/term/?shortname="+match)
-      .then(res => res.json())
-      .then(data => {
-        if (data != null) {
-          core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-          $html  = "<h2>"+data.name+"</h2>";
-          $html += "<p>"+data.description+"</p>";
-          $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
-          document.getElementById("susie").style.display = "block";
-          document.getElementById("susie").innerHTML = $html;
-        } 
+      
+      this.query.then(d => {
+        fetch("https://vocab.audioblast.org/api/term/?shortname="+match)
+        .then(res => res.json())
+        .then(data => {
+          if (data != null && data.hasOwnProperty("shortname")) {
+            core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
+            $html  = "<h2>"+data.name+"</h2>";
+            $html += "<p>"+data.description+"</p>";
+            $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
+            document.getElementById("susie").style.display = "block";
+            document.getElementById("susie").innerHTML = $html;
+          } 
+        })
       })
-      */
+      
 
 
       this.query.then(d => {
