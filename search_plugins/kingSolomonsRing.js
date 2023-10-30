@@ -38,6 +38,8 @@ const kingSolomonsRing = {
         })
       });
 
+      
+      /**
       this.query = fetch("https://vocab.audioblast.org/api/term/?shortname="+match)
       .then(res => res.json())
       .then(data => {
@@ -50,6 +52,7 @@ const kingSolomonsRing = {
           document.getElementById("susie").innerHTML = $html;
         } 
       })
+      */
 
 
       this.query.then(d => {
