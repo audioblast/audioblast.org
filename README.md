@@ -34,6 +34,10 @@ Processes any emoji in searh terms.
 
 Named after the Rosetta Stone.
 
+### Fermat
+
+Processes information relating to annotations.
+
 ## Credits
 
 Initial development of [audioBlast](https://audioblast.org) was supported by the Leverhulme Trust funded [Automated Acoustic Observatories](https://ebaker.me.uk/aao) project at the University of York.
