@@ -23,7 +23,8 @@ const recordingSearch = {
     matched.forEach(element => {
       if (
         element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
-        element.startsWith(":'trait':")
+        element.startsWith(":'trait':") ||
+        element.startsWith(":'trait_value':")
       ) {
         document.getElementById("watson").inerHTML = "";
         document.getElementById("watson").style.display = "none";
