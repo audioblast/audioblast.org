@@ -20,7 +20,10 @@ const fermat = {
     display(mode, matched, core) {
       var annotations = Array();
       matched.forEach(element => {
-        if (element.startsWith(":'named_trait_with_value':'Silent taxa':")) {
+        if (
+          element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
+          element.startsWith(":'trait':")
+        ) {
           document.getElementById("fermat").inerHTML = "";
           document.getElementById("fermat").style.display = "none";
           return;

@@ -21,7 +21,10 @@ const recordingSearch = {
   display(mode, matched, core) {
     var recordings = Array();
     matched.forEach(element => {
-      if (element.startsWith(":'named_trait_with_value':'Silent taxa':")) {
+      if (
+        element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
+        element.startsWith(":'trait':")
+      ) {
         document.getElementById("watson").inerHTML = "";
         document.getElementById("watson").style.display = "none";
         return;
