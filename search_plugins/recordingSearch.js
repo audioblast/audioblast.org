@@ -55,7 +55,7 @@ const recordingSearch = {
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
-          document.getElementById("watson").innerHTML = '<h2>Recordings-taxa</h2><div id="recordingstaxa-tabulator" class="search-table"></div>';
+          document.getElementById("watson").innerHTML = "<h2>Recordings of "+rank+" "+taxon+"</h2><div id='recordingstaxa-tabulator' class='search-table'></div>";
           eval('generateTabulator("#recordingstaxa-tabulator", "recordingstaxa", {field:"'+rank+'", type:"=", value:"'+taxon+'"});');
         } else {
           document.getElementById("watson").style.display = "none";

@@ -114,7 +114,7 @@ const kingSolomonsRing = {
           } else if (parts[1] == "'taxon_with_rank'") {
             const italicise = ['genus', 'species'];
             if (italicise.includes(parts[3].replaceAll("'", ""))) {
-              title += "<i>"+parts[2].replaceAll("'", "")+"</i>";
+              title += "<i>"+parts[2].replaceAll("'", "")+"</i> ";
             } else {
               title += parts[2].replaceAll("'", "")+" ";
             }
@@ -142,7 +142,7 @@ const kingSolomonsRing = {
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
-          document.getElementById("solomon").innerHTML = '<h2>'+title+'</h2><div id="traits-tabulator" class="search-table"></div>';
+          document.getElementById("solomon").innerHTML = '<h2>Traits for '+title+'</h2><div id="traits-tabulator" class="search-table"></div>';
           eval('generateTabulator("#traits-tabulator", "traitstaxa",'+JSON.stringify(filters)+');');
         } else {
           document.getElementById("solomon").style.display = "none";
