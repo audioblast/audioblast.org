@@ -22,6 +22,7 @@
         <li>Soundscapes view shows data from deployments.</li>
         <li>First data from BirdNET is now in the system.</li>
         <li>There is now an updates page.</li>
+        <li>Infrastrcture: Milvus database for testing vector search.</li>
       </ul>
     </div>
 
