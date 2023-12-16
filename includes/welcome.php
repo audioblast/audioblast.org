@@ -3,4 +3,6 @@
        to make a bioacoustic discovery and search engine.</p>
     <p>This website uses the <a href="https://api.audioblast.org">audioBlast API</a> which you
        can use to create your own projects. Read more <a href="about.php">about audioBlast</a> or
-       check ut our <a href="updates.php">latest updates</a>.</p>
+       check out our <a href="updates.php">latest updates</a>.</p>
+    <p>Additional project documentation is available on <a href="https://docs.audioblast.org">
+      docs.audioblast.org</a>.</p>
