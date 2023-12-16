@@ -23,6 +23,8 @@
         <li>First data from BirdNET is now in the system.</li>
         <li>There is now an updates page.</li>
         <li>Infrastrcture: Milvus database for testing vector search.</li>
+        <li>Progressive uploads for deployments.</li>
+        <li>Progressive uploads for annotations.</li>
       </ul>
     </div>
 
