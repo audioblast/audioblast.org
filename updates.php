@@ -16,6 +16,11 @@
 
   <div class="feature-container">
     <div class="feature">
+      <h3>Week of 17th September 2021</h3>
+      <ul>
+      <li>BirdNET analyses are now linked to deployments.</li>
+      </ul>
+      
       <h3>Week of 10th December 2023</h3>
       <ul>
         <li>Soundscape recordings can now be associated with a deployment.</li>
