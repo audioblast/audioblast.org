@@ -110,8 +110,9 @@
 }
 
 #zoom-control li img {
-  height: 65%;
-  width: 65%;
+  height: 85%;
+  width: 85%;
+  object-fit: contain;
   transition: var(--transition);
 }
 
