@@ -137,7 +137,9 @@ const taxonSearch = {
         core.parsed(this.name, false);
       })
       .catch(function (error) {
-    });
+        core.consoleLog("Linnaeus", "Error fetching taxon data: " + error.message);
+        core.parsed("Linnaeus", false);
+      });
     this.data = dataRequested;
     return;
   },

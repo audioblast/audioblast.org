@@ -3,33 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if (isset($_GET["page"])) {
-  $current = $_GET["page"];
-} else {
-  $current = "home";
-}
+include("header.php");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <title><?php print("audioBLAST! ".$current); ?></title>
-
-  <link rel="stylesheet" href="ab-api.css">
-  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-
-  <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
-  <script src="ab-tabulator.js"></script>
-  <script src="ab-search.js"></script>
-</head>
-
-<body>
-<div id="title">
-  <a href="/">
-    <img src="https://cdn.audioblast.org/audioblast_flash.png"
-    alt="audioBLAST flash logo"
-    class="audioblast-flash" /></a>
-  <h1>audioBLAST! Browser</h1>
   <div id="menu">
   <?php
   if ($current == "home") {
@@ -41,7 +16,7 @@ if (isset($_GET["page"])) {
   } else {
     print("<ul class='ulhoriz'>");
     $types = json_decode(
-      file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+      file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
     foreach ($types as $type) {
       print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
     }
@@ -63,7 +38,5 @@ if ($current == "home") {
   </script>
   <?php
 }
+include("footer.php");
 ?>
-</body>
-
-</html>
