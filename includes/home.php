@@ -1,16 +1,17 @@
-<div class="home-search">
+<div class="home-search" role="search">
   <label for="search" id="search-label">Search</label>
   <input id="search"
          placeholder="Search..."
+         aria-label="Enter search terms" 
          autocomplete="off"
          onkeydown="if (event.keyCode == 13) { searchAudioBlast(); }">
   <div id="zoom-control" class="search-control">
     <ul class="ulhoriz">
       <li>
-        <a onclick="searchAudioBlast()">
+        <a aria-label="Click here to search" onclick="searchAudioBlast()">
           <img class="audioblast-button"
                src="https://cdn.audioblast.org/audioblast_flash_white.png"
-               alt="alphaBLAST! Search"/>
+               alt="audioBlast! Search"/>
         </a>
       </li>
     </ul>
@@ -20,8 +21,13 @@
     <div id="search-suggests-details"></div>
   </details>
 
+  <?php include("includes/load_search_js.php"); ?>
   <script>
+  document.addEventListener("DOMContentLoaded", function(event) {
     searchAB.searchSuggest("search-suggests-details");
+  });
+  </script>
+  <script>
     function searchAudioBlast() {
       const term = document.getElementById("search").value;
       window.open("audioblast.php/?search="+term, "_self");
@@ -29,8 +35,7 @@
   </script>
 </div>
 
-
-<div class="feature-container">
+<div class="feature-container" role="main">
   <div class="feature">
     <h3><a href="/?page=recordings" id="recordings"></a></h3>
     <p>Recordings underpin bioacoustic research, from species to soundscapes.</p>
@@ -89,12 +94,19 @@
   </div>
 </div>
 
-<div class="feature-container">
+<div class="feature-container" role="contentinfo">
   <div class="feature">
     <h2>Credits</h2>
   </div>
   <div class="feature">
-    <p>This project was conceived and developed as part of the Leverhulme Trust funded <i>Automated Acoustic Observatories</i> project at the University of York.</p>
+    <p>This project was conceived and developed by <a href="https://ebaker.me.uk">Ed Baker</a> as part of the Leverhulme Trust funded <a href="https://ebaker.me.uk/aao">Automated Acoustic Observatories</a> project at the University of York.</p>
     <p>It is currently hosted by the Natural History Museum, London and developed (in part) as part of the <i>Urban Nature Project</i>.</p>
+  </div>
+  <div class="feature">
+    <p>audioBlast makes use of the following open source projects:</p>
+    <ul>
+      <li><a href="https://tabulator.info/">Tabulator</a> - interactive tables on the web.</li>
+      <li><a href="https://github.com/edwbaker/PhyMoji-PHP">PhyMoji-PHP</a> - phylogenetic emoji support.</li>
+    </ul>
   </div>
 </div>

@@ -1,42 +1,48 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+<?php include("includes/init.php"); ?>
+<!DOCTYPE html>
+<html lang="en">
 
-include("header.php");
-?>
+<head>
+  <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
+  <link rel="stylesheet" href="ab-api.css">
+  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
+  <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+  <script src="ab-tabulator.js"></script>
+</head>
+
+<body>
+<div id="title" role="banner">
+  <a href="/">
+    <img src="https://cdn.audioblast.org/audioblast_flash.png"
+    alt="audioBlast flash logo"
+    class="audioblast-flash" /></a>
+  <h1>audioBlast Browser<?php print($in_dev?" (DEV)":"")?></h1>
   <div id="menu">
   <?php
-  if ($current == "home") {
+  if ($current_page == "home") {
+    include("includes/welcome.php");
     ?>
-    <h2>Welcome to audioBLAST!</h2>
-    <p>Audioblast is a project to collect and analyse sound files and data from around the world to make a bioacoustic discovery and search engine.</p>
-    <p>This website uses the <a href="https://api.audioblast.org">audioBLAST API</a> which you can use to create your own projects.</p>
+    </div></div>
     <?php
+    include("includes/home.php");
   } else {
-    print("<ul class='ulhoriz'>");
+    print("<ul class='ulhoriz' role='navigation'>");
     $types = json_decode(
-      file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+      file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
     foreach ($types as $type) {
       print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
     }
-    print("</ul>");
+    ?>
+    </ul>
+    <div id="data-table" role="main">
+    </div>
+    <script>
+      generateTabulator("#data-table", "<?php print($current_page); ?>");
+    </script>
+    </div></div>
+    <?php
   }
-  ?>
-  </div>
-</div>
-
-<?php
-if ($current == "home") {
-  include("home.php");
-} else {
-  ?>
-  <div id="data-table">
-  </div>
-  <script>
-    generateTabulator("#data-table", "<?php print($current); ?>");
-  </script>
-  <?php
-}
-include("footer.php");
 ?>
+</body>
+
+</html>

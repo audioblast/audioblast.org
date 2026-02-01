@@ -84,6 +84,16 @@ h2 {
   margin-bottom: 12px;
 }
 
+a {
+  color: #004080;
+}
+
+#data-table {
+  position: absolute;
+  top: 77px;
+  bottom:0px;
+}
+
 h3 {
   margin-bottom: 8px;
   font-weight: 600;
@@ -188,6 +198,10 @@ summary:hover {
   border: none;
   max-height: 200px;
   overflow-y: auto;
+}
+
+#susie {
+  display: none;
 }
 
 #search-suggests-details a {
