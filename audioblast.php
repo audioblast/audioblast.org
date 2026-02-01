@@ -7,14 +7,14 @@ include("header.php");
       searchAB.init();
     });
   </script>
-    <h1>𝛼-Blast! (very alpha version of audioBLAST!)</h1>
-
-    <details id="search-console">
-      <summary>Search console</summary>
-      <div id="menu">
-      </div>
-    </details>
   </div>
+
   <div id="search-results" class="feature-container">
   </div>
+
+  <details id="search-console">
+    <summary>Search console</summary>
+    <div id="menu">
+    </div>
+  </details>
 <?php include("footer.php"); ?>
