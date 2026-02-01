@@ -65,7 +65,7 @@ a:hover {
   flex-wrap: wrap;
 }
 
-#title a {
+#title > a {
   display: flex;
   align-items: center;
 }
@@ -100,6 +100,12 @@ h3 {
 #menu p {
   color: var(--text-secondary);
   margin: 8px 0;
+  line-height: 1.6;
+}
+
+#menu p a {
+  display: inline;
+  white-space: nowrap;
 }
 
 .home-search {
