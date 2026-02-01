@@ -87,8 +87,11 @@
 /* Data table positioning */
 #data-table {
   position: absolute;
-  top: 77px;
-  bottom: 0px;
+  top: 140px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 16px;
 }
 
 /* Feature containers */
