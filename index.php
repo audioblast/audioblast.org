@@ -18,7 +18,7 @@ include("header.php");
     $types = json_decode(
       file_get_contents("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
     foreach ($types as $type) {
-      print("<li><a href='https://audioblast.org/?page=".$type->name."'>".$type->hname."</a></li>");
+      print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
     }
     print("</ul>");
   }
