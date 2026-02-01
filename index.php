@@ -27,18 +27,23 @@
     include("includes/home.php");
   } else {
     print("<ul class='ulhoriz' role='navigation'>");
-    $types = json_decode(
-      file_get_contents(API_BASE . "/standalone/modules/list_modules/?category=data&output=nakedJSON"));
-    foreach ($types as $type) {
-      print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
+    $types_json = @file_get_contents(API_BASE . "/standalone/modules/list_modules/?category=data&output=nakedJSON");
+    if ($types_json !== false) {
+      $types = json_decode($types_json);
+      if ($types) {
+        foreach ($types as $type) {
+          print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
+        }
+      }
     }
     ?>
     </ul>
-    </div></div>
-    <div id="data-table" role="main"></div>
+    <div id="data-table" role="main">
+    </div>
     <script>
       generateTabulator("#data-table", "<?php print($current_page); ?>");
     </script>
+    </div></div>
     <?php
   }
 ?>
