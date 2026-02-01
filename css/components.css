@@ -74,10 +74,6 @@
 }
 
 /* Buttons */
-.audioblast-button:hover {
-  filter: brightness(1.1);
-}
-
 #zoom-control {
   float: right;
   padding-right: 0;
@@ -89,7 +85,7 @@
 }
 
 #zoom-control li {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #ea580c 100%);
+  background-color: var(--title-bg);
   color: var(--text-light);
   width: 56px;
   height: 56px;
@@ -102,11 +98,16 @@
 }
 
 #zoom-control li:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-md);
+  transform: scale(1.02);
 }
 
 #zoom-control li img {
-  height: 70%;
-  width: 70%;
+  height: 100%;
+  width: 100%;
+  transition: var(--transition);
+}
+
+/* Flash orange on hover - the "nifty" effect from original */
+.audioblast-button:hover {
+  filter: invert(61%) sepia(77%) saturate(1488%) hue-rotate(360deg) brightness(103%) contrast(103%);
 }
