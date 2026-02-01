@@ -14,7 +14,7 @@ Named after the Oracle of Apollo at Delphi.
 
 ### Carson
 
-Makes Englsh terms in search queries tidy.
+Makes English terms in search queries tidy.
 
 Named after Mr Carson from Downton Abbey.
 
@@ -30,7 +30,7 @@ Processes terms relating to taxonomic names.
 
 ### Rosetta
 
-Processes any emoji in searh terms.
+Processes any emoji in search terms.
 
 Named after the Rosetta Stone.
 
