@@ -26,14 +26,18 @@
     <?php
     include("includes/home.php");
   } else {
-    print("<ul class='ulhoriz' role='navigation'>");
-    $types = json_decode(
-      file_get_contents(API_BASE . "/standalone/modules/list_modules/?category=data&output=nakedJSON"));
-    foreach ($types as $type) {
-      print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
-    }
     ?>
-    </ul>
+    <ul class='ulhoriz' role='navigation' id='nav-menu'></ul>
+    <script>
+      fetch("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON")
+        .then(response => response.json())
+        .then(types => {
+          const menu = document.getElementById('nav-menu');
+          types.forEach(type => {
+            menu.innerHTML += "<li><a href='/?page=" + type.name + "'>" + type.hname + "</a></li>";
+          });
+        });
+    </script>
     </div></div>
     <div id="data-table" role="main"></div>
     <script>
