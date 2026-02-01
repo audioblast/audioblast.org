@@ -16,6 +16,10 @@
 
   <div class="feature-container">
     <div class="feature">
+      <h3>Week of 26th Jnauary 2026</h3>
+      <ul>
+        <li>Modernised UI for audioblast.org</li>
+      </ul>
       <h3>Week of 8th January 2024</h3>
       <ul>
         <li>taxonBot now adds missing taxonomic ranks from the Catalogue of Life.</li>
