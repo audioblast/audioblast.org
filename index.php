@@ -38,12 +38,11 @@
     }
     ?>
     </ul>
-    <div id="data-table" role="main">
-    </div>
+    </div></div>
+    <div id="data-table" role="main"></div>
     <script>
       generateTabulator("#data-table", "<?php print($current_page); ?>");
     </script>
-    </div></div>
     <?php
   }
 ?>
