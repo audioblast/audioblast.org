@@ -166,6 +166,24 @@ summary:hover {
   color: var(--primary-color);
 }
 
+#search-console {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 24px;
+}
+
+#search-console summary {
+  padding: 4px 0;
+}
+
+#search-console #menu {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  border: none;
+}
+
 #search-suggests-details a {
   cursor: pointer;
   border-radius: var(--radius-sm);

@@ -9,8 +9,11 @@ include("header.php");
   </script>
     <h1>𝛼-Blast! (very alpha version of audioBLAST!)</h1>
 
-    <div id="menu">
-    </div>
+    <details id="search-console">
+      <summary>Search console</summary>
+      <div id="menu">
+      </div>
+    </details>
   </div>
   <div id="search-results" class="feature-container">
   </div>
