@@ -348,9 +348,26 @@ summary:focus {
     font-size: 1.25rem;
   }
   
+  #menu {
+    padding: 8px 12px;
+  }
+  
+  #menu .ulhoriz {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  #menu .ulhoriz li {
+    margin-right: 0;
+    padding: 6px 10px;
+    font-size: 0.875rem;
+  }
+  
   .home-search {
     margin: 16px;
     padding: 16px;
+    border-radius: var(--radius-lg);
   }
   
   #search {
@@ -364,8 +381,21 @@ summary:focus {
     height: 48px;
   }
   
+  .feature-container {
+    padding: 0 12px;
+  }
+  
   .feature {
     padding: 16px;
+    margin: 8px 0;
+  }
+  
+  .feature h2 {
+    font-size: 1.25rem;
+  }
+  
+  .feature h3 {
+    font-size: 1rem;
   }
   
   .feature-image {
@@ -373,6 +403,51 @@ summary:focus {
     width: 100%;
     max-width: 200px;
     margin-bottom: 12px;
+  }
+  
+  #data-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  #title {
+    padding: 10px 12px;
+  }
+  
+  #title h1 {
+    font-size: 1.1rem;
+  }
+  
+  .audioblast-flash {
+    height: 32px;
+    padding-right: 8px;
+  }
+  
+  .home-search {
+    margin: 12px;
+    padding: 12px;
+  }
+  
+  #search {
+    width: calc(100% - 48px);
+    font-size: 0.9rem;
+    height: 44px;
+    padding: 0 12px;
+  }
+  
+  #zoom-control li {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .feature {
+    padding: 12px;
+  }
+  
+  .feature p {
+    font-size: 0.9rem;
   }
 }
 
