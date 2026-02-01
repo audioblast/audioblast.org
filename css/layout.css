@@ -1,0 +1,107 @@
+/**
+ * Layout Styles
+ * 
+ * Header, navigation, and page structure.
+ */
+
+/* Header / Title Bar */
+#title {
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 100%);
+  width: 100%;
+  overflow: hidden;
+  padding: 16px 24px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#title > a {
+  display: flex;
+  align-items: center;
+}
+
+#title h1 {
+  margin: 0;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+}
+
+.audioblast-flash {
+  height: 42px;
+  float: left;
+  padding-right: 12px;
+  transition: var(--transition);
+}
+
+.audioblast-flash:hover {
+  transform: scale(1.05);
+}
+
+/* Menu */
+#menu {
+  background-color: var(--bg-card);
+  width: 100%;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+#menu p {
+  color: var(--text-secondary);
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+#menu p a {
+  display: inline;
+  white-space: nowrap;
+}
+
+/* Horizontal list navigation */
+.ulhoriz {
+  padding: 8px;
+  margin: 0;
+  list-style: none;
+}
+
+.ulhoriz li {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  margin-right: 8px;
+  background: var(--bg-medium);
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+.ulhoriz li:hover {
+  background: var(--bg-dark);
+}
+
+.ulhoriz li a {
+  color: var(--text-light);
+}
+
+/* Data table positioning */
+#data-table {
+  position: absolute;
+  top: 77px;
+  bottom: 0px;
+}
+
+/* Feature containers */
+.feature-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Module boxes */
+.module {
+  background: var(--bg-medium);
+  padding: 16px;
+  margin: 16px;
+  border-radius: var(--radius-md);
+}

@@ -1,11 +1,23 @@
 <?php
-//Initial configurtion
+/**
+ * audioBLAST Initialization
+ * 
+ * Handles initial configuration and security checks.
+ */
+
+// Load configuration
+require_once(__DIR__ . '/config.php');
+
+// Initial configuration
 $in_dev = FALSE;
-$current_page = isset($_GET["page"]) ? $_GET["page"] : "home";
+
+// Validate and sanitize page parameter
+$requested_page = isset($_GET["page"]) ? $_GET["page"] : "home";
+$current_page = in_array($requested_page, ALLOWED_PAGES) ? $requested_page : "home";
 
 // If ping page, return pong. This is used by status.acousti.cloud to check that
 // the server is up and returning HTML.
-if ($current_page == "ping") {
+if ($requested_page == "ping") {
   echo "pong";
   exit;
 }

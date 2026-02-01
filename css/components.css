@@ -1,0 +1,112 @@
+/**
+ * Component Styles
+ * 
+ * Reusable UI components: cards, buttons, tables, etc.
+ */
+
+/* Feature Cards */
+.feature {
+  background-color: var(--bg-card);
+  margin: 12px 0;
+  padding: 20px 24px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.feature:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.feature p {
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.feature h3 a {
+  color: var(--primary-color);
+  font-size: 1.125rem;
+}
+
+.feature-image {
+  float: left;
+  width: 180px;
+  margin-right: 20px;
+  border-radius: var(--radius-sm);
+}
+
+.feature-container .feature:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  margin-top: 24px;
+}
+
+.feature-container .feature:last-child {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.feature-container .feature:only-child {
+  border-radius: var(--radius-lg);
+}
+
+/* Striped Tables */
+.stripe {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.stripe tbody tr:nth-child(even) {
+  background: var(--bg-light);
+}
+
+.stripe tbody tr:nth-child(odd) {
+  background: var(--bg-card);
+}
+
+.stripe td, .stripe th {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+/* Buttons */
+.audioblast-button:hover {
+  filter: brightness(1.1);
+}
+
+#zoom-control {
+  float: right;
+  padding-right: 0;
+}
+
+#zoom-control .ulhoriz {
+  margin: 0;
+  padding: 0;
+}
+
+#zoom-control li {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #ea580c 100%);
+  color: var(--text-light);
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#zoom-control li:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+#zoom-control li img {
+  height: 70%;
+  width: 70%;
+}

@@ -1,0 +1,109 @@
+/**
+ * Search Styles
+ * 
+ * Search box, suggestions, and search console.
+ */
+
+/* Search Box Container */
+.home-search {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-light) 100%);
+  margin: 24px auto;
+  padding: 24px;
+  border-radius: var(--radius-xl);
+  max-width: 800px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+}
+
+/* Search Input */
+#search {
+  height: 56px;
+  width: calc(100% - 64px);
+  font-size: 1.25rem;
+  font-weight: 400;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  border: 2px solid var(--border-color);
+  border-right: none;
+  outline: none;
+  padding: 0 16px;
+  margin-bottom: 12px;
+  transition: var(--transition);
+  background: var(--bg-card);
+}
+
+#search:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+#search::placeholder {
+  color: var(--text-secondary);
+}
+
+#search-label {
+  display: none;
+}
+
+/* Search Controls */
+.search-control {
+  padding-right: 0 !important;
+}
+
+.search-control ul li {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+}
+
+/* Search Suggestions */
+#susie {
+  display: none;
+}
+
+#search-suggests-details a {
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: var(--text-light);
+  margin: 4px;
+  padding: 6px 12px;
+  display: inline-block;
+  font-size: 0.875rem;
+  transition: var(--transition);
+}
+
+#search-suggests-details a:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Search Console */
+#search-console {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 16px;
+}
+
+#search-console summary {
+  padding: 4px 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+#search-console #menu {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  padding: 8px;
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
+  border: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Search Results Table */
+.search-table {
+  height: 300px !important;
+  margin-bottom: 16px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}

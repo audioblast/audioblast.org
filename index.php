@@ -28,7 +28,7 @@
   } else {
     print("<ul class='ulhoriz' role='navigation'>");
     $types = json_decode(
-      file_get_contents("http://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON"));
+      file_get_contents(API_BASE . "/standalone/modules/list_modules/?category=data&output=nakedJSON"));
     foreach ($types as $type) {
       print("<li><a href='/?page=".$type->name."'>".$type->hname."</a></li>");
     }

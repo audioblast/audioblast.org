@@ -1,0 +1,74 @@
+/**
+ * Base Styles
+ * 
+ * CSS reset, typography, and base element styles.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+h2 {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  padding: 8px 0;
+  transition: var(--transition);
+}
+
+summary:hover {
+  color: var(--primary-color);
+}
+
+/* Focus styles for accessibility */
+a:focus,
+button:focus,
+input:focus,
+summary:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Utility classes */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.tdcent {
+  text-align: center;
+}
