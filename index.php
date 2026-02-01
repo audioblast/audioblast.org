@@ -11,21 +11,18 @@
 </head>
 
 <body>
-<header id="page-header">
-  <div id="title" role="banner">
-    <a href="/">
-      <img src="https://cdn.audioblast.org/audioblast_flash.png"
-      alt="audioBlast flash logo"
-      class="audioblast-flash" /></a>
-    <h1>audioBlast Browser<?php print($in_dev?" (DEV)":"")?></h1>
-  </div>
+<div id="title" role="banner">
+  <a href="/">
+    <img src="https://cdn.audioblast.org/audioblast_flash.png"
+    alt="audioBlast flash logo"
+    class="audioblast-flash" /></a>
+  <h1>audioBlast Browser<?php print($in_dev?" (DEV)":"")?></h1>
   <div id="menu">
   <?php
   if ($current_page == "home") {
     include("includes/welcome.php");
     ?>
-  </div>
-</header>
+    </div></div>
     <?php
     include("includes/home.php");
   } else {
@@ -37,12 +34,11 @@
     }
     ?>
     </ul>
-  </div>
-</header>
-<div id="data-table" role="main"></div>
-<script>
-  generateTabulator("#data-table", "<?php print($current_page); ?>");
-</script>
+    </div></div>
+    <div id="data-table" role="main"></div>
+    <script>
+      generateTabulator("#data-table", "<?php print($current_page); ?>");
+    </script>
     <?php
   }
 ?>

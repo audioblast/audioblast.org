@@ -84,20 +84,13 @@
   color: var(--text-light);
 }
 
-/* Data table positioning - flexbox for dynamic height */
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-#page-header {
-  flex-shrink: 0;
-}
-
+/* Data table positioning */
 #data-table {
-  flex: 1;
-  min-height: 0;
+  position: absolute;
+  top: 140px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 0 16px;
 }
 
