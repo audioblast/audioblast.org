@@ -84,13 +84,21 @@
   color: var(--text-light);
 }
 
-/* Data table positioning */
+/* Data table pages - flexbox layout */
+body.data-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+}
+
+body.data-page #title {
+  flex-shrink: 0;
+}
+
 #data-table {
-  position: absolute;
-  top: 140px;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  flex: 1;
+  min-height: 0;
   padding: 0 16px;
 }
 

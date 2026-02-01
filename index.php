@@ -10,7 +10,7 @@
   <script src="ab-tabulator.js"></script>
 </head>
 
-<body>
+<body<?php if ($current_page != "home") echo ' class="data-page"'; ?>>
 <div id="title" role="banner">
   <a href="/">
     <img src="https://cdn.audioblast.org/audioblast_flash.png"
