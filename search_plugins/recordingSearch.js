@@ -20,21 +20,21 @@ const recordingSearch = {
 
   display(mode, matched, core) {
     var recordings = Array();
+    var hasTrait = false;
     matched.forEach(element => {
       if (
         element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
         element.startsWith(":'trait':") ||
         element.startsWith(":'trait_value':")
       ) {
-        document.getElementById("watson").innerHTML = "";
-        document.getElementById("watson").style.display = "none";
-        return;
+        hasTrait = true;
       }
       if (element.startsWith(":'taxon_with_rank':")) {
         recordings.push(element);
       }
     });
-    if (recordings.length > 0 ) {
+    // Recordings aren't shown for searches with a trait
+    if (recordings.length > 0 && !hasTrait) {
       this.recordingsDisplay(recordings);
     } else {
       document.getElementById("watson").innerHTML = "";
@@ -56,6 +56,10 @@ const recordingSearch = {
       var dataRequested = fetch(AB_API_BASE+"/data/recordingstaxa/?"+encodeURIComponent(rank)+"="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
+        // Ignore the response if the box has since been emptied or moved on to another taxon
+        if (this.current_display != matched) {
+          return;
+        }
         if (data.length == 1) {
           document.getElementById("watson").innerHTML = "<h2></h2><div id='recordingstaxa-tabulator' class='search-table'></div>";
           document.querySelector("#watson h2").textContent = "Recordings of "+rank+" "+taxon;
