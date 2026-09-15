@@ -139,15 +139,20 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
   var start = document.createElement("input");
   start.setAttribute("type", "number");
   start.setAttribute("placeholder", "Min");
-  start.setAttribute("min", 0);
-  start.setAttribute("max", 100);
   start.style.padding = "4px";
   start.style.width = "50%";
   start.style.boxSizing = "border-box";
 
-  start.value = cell.getValue();
+  //restore any existing range
+  var current = cell.getValue() || {};
+  start.value = current.start || "";
 
   function buildValues() {
+    if (start.value === "" && end.value === "") {
+      //clear the filter rather than sending an empty range
+      success("");
+      return;
+    }
     success({
       start:start.value,
       end:end.value,
@@ -166,6 +171,7 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
 
   end = start.cloneNode();
   end.setAttribute("placeholder", "Max");
+  end.value = current.end || "";
 
   start.addEventListener("change", buildValues);
   start.addEventListener("blur", buildValues);
@@ -184,19 +190,13 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
 
  //Custom min/max filter function
 function minMaxFilterFunction(headerValue, rowValue, rowData, filterParams){
-  if (rowValue) {
-    if (rowValue == null) {return false;}
-    if (headerValue.start != "") {
-      if (headerValue.end != "") {
-        return rowValue >= headerValue.start && rowValue <= headerValue.end;
-      } else {
-        return rowValue >= headerValue.start;
-      }
-    } else {
-      if (headerValue.end != "") {
-        return rowValue <= headerValue.end;
-      }
-    }
-  }
+  //compare as numbers; values arrive from the API as strings
+  var value = parseFloat(rowValue);
+  var min = parseFloat(headerValue.start);
+  var max = parseFloat(headerValue.end);
+  if (isNaN(min) && isNaN(max)) {return true;}
+  if (isNaN(value)) {return false;}
+  if (!isNaN(min) && value < min) {return false;}
+  if (!isNaN(max) && value > max) {return false;}
   return true; //must return a boolean, true if it passes the filter.
 }

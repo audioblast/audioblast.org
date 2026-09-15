@@ -27,6 +27,24 @@ const kingSolomonsRing = {
       return div.innerHTML;
     },
 
+    showTraitInfo(data) {
+      const box = document.getElementById("susie");
+      const heading = document.createElement("h2");
+      heading.textContent = data.name;
+      const description = document.createElement("p");
+      description.textContent = data.description;
+      box.replaceChildren(heading, description);
+      if (/^https?:\/\//i.test(data.url)) {
+        const link = document.createElement("a");
+        link.href = data.url;
+        link.textContent = data.url;
+        const linkParagraph = document.createElement("p");
+        linkParagraph.appendChild(link);
+        box.appendChild(linkParagraph);
+      }
+      box.style.display = "block";
+    },
+
     parse(mode, match, core) {
       if (match == "silent") {
         core.replaceMatch("silent", ":'named_trait_with_value':'Silent taxa':'Sound Production Method':'None':", this.name);
@@ -35,7 +53,7 @@ const kingSolomonsRing = {
 
       //TODO: Below use text_traits API
       this.query.then(d => {
-        fetch("https://api.audioblast.org/data/traits/?value="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
+        fetch(AB_API_BASE+"/data/traits/?value="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
@@ -50,11 +68,7 @@ const kingSolomonsRing = {
         .then(data => {
           if (data != null && data.hasOwnProperty("shortname")) {
             core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-            $html  = "<h2>"+data.name+"</h2>";
-            $html += "<p>"+data.description+"</p>";
-            $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
-            document.getElementById("susie").style.display = "block";
-            document.getElementById("susie").innerHTML = $html;
+            this.showTraitInfo(data);
           } 
         })
       })
@@ -65,17 +79,13 @@ const kingSolomonsRing = {
         .then(data => {
           if (data != null && data.hasOwnProperty("shortname")) {
             core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-            $html  = "<h2>"+data.name+"</h2>";
-            $html += "<p>"+data.description+"</p>";
-            $html += "<p><a href='"+data.url+"'>"+data.url+"</a></p>"
-            document.getElementById("susie").style.display = "block";
-            document.getElementById("susie").innerHTML = $html;
+            this.showTraitInfo(data);
           } 
         })
       })
 
       this.query.then(d => {
-        fetch("https://api.audioblast.org/data/traits/?trait="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
+        fetch(AB_API_BASE+"/data/traits/?trait="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
@@ -144,7 +154,7 @@ const kingSolomonsRing = {
       let params = filters.map(element => `${encodeURIComponent(element.field)}=${encodeURIComponent(element.value)}`).join('&');
       params = `?${params}`;
 
-      this.query = dataRequested = fetch("https://api.audioblast.org/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")
+      this.query = fetch(AB_API_BASE+"/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
