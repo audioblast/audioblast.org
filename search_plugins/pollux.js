@@ -154,8 +154,7 @@ const pollux = {
       if (term.synonym != null) {
         box.appendChild(this.paragraph("“" + term.synonym + "” is a synonym of " + term.name + "."));
       }
-      //A definition that only repeats the term's name adds nothing
-      if (term.definition != null && this.words(term.definition) != this.words(term.name)) {
+      if (term.definition != null) {
         box.appendChild(this.paragraph(term.definition));
       }
     });
