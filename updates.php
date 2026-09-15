@@ -16,7 +16,7 @@
 
   <div class="feature-container">
     <div class="feature">
-      <h3>Week of 26th Jnauary 2026</h3>
+      <h3>Week of 26th January 2026</h3>
       <ul>
         <li>Modernised UI for audioblast.org</li>
       </ul>
