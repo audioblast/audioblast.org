@@ -50,7 +50,7 @@ const fermat = {
         document.getElementById("fermat").style.display = "block";
         const parts = matched.split(":");
         const taxon = parts[2].replaceAll("'", "");
-        var dataRequested = fetch("https://api.audioblast.org/data/annomate/?taxon="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
+        var dataRequested = fetch(AB_API_BASE+"/data/annomate/?taxon="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {

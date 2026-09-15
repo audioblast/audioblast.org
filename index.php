@@ -11,8 +11,8 @@ if ($current_page == "about") {
 <head>
   <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
   <link rel="stylesheet" href="ab-api.css">
-  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-  <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+  <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
+  <script src="<?php echo TABULATOR_JS; ?>"></script>
   <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
   <script src="ab-tabulator.js"></script>
 </head>
@@ -20,7 +20,7 @@ if ($current_page == "about") {
 <body<?php if ($current_page != "home") echo ' class="data-page"'; ?>>
 <div id="title" role="banner">
   <a href="/">
-    <img src="https://cdn.audioblast.org/audioblast_flash.png"
+    <img src="<?php echo CDN_BASE; ?>/audioblast_flash.png"
     alt="audioBlast flash logo"
     class="audioblast-flash" /></a>
   <h1>audioBlast Browser<?php print($in_dev?" (DEV)":"")?></h1>

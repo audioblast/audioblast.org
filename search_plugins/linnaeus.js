@@ -41,13 +41,15 @@ const linnaeus = {
       const passed_match = matched;
       var parts = matched.split(":");
       matched = parts[2].replaceAll("'", "");
-      this.query = fetch("https://api.audioblast.org/data/taxa/?taxon="+encodeURIComponent(matched)+"&output=nakedJSON")
+      this.query = fetch(AB_API_BASE+"/data/taxa/?taxon="+encodeURIComponent(matched)+"&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
-            taxon_info = data[0];
+            const taxon_info = data[0];
             core.replaceMatch(passed_match, ":'taxon_with_rank':'"+taxon_info["taxon"]+"':'"+taxon_info["rank"].toLowerCase()+"':", this.name);
-            var ret = '<h2>'+taxon_info["rank"]+": "+taxon_info["taxon"]+'</h2>';
+            const box = document.getElementById("linnaeus");
+            const heading = document.createElement("h2");
+            heading.textContent = taxon_info["rank"]+": "+taxon_info["taxon"];
             const ranks = [
               "kingdom",
               "class",
@@ -60,19 +62,27 @@ const linnaeus = {
               "species"
             ];
             const italicise = ["genus", "species"];
-            var first = true;
+            const content = [heading];
             ranks.forEach(element => {
               if (taxon_info[element] != null) {
-                if (!first) {
-                  ret += " > ";
+                if (content.length > 1) {
+                  content.push(" > ");
                 }
-                var name = italicise.includes(element) ? "<i>"+taxon_info[element]+"</i>" : taxon_info[element];
-                ret += '<a href="audioblast.php?search='+encodeURIComponent(taxon_info[element])+'">'+name+"</a>";
-                first = false;
+                const link = document.createElement("a");
+                link.href = "audioblast.php?search="+encodeURIComponent(taxon_info[element]);
+                if (italicise.includes(element)) {
+                  const italic = document.createElement("i");
+                  italic.textContent = taxon_info[element];
+                  link.appendChild(italic);
+                } else {
+                  link.textContent = taxon_info[element];
+                }
+                content.push(link);
               }
             });
-            document.getElementById("linnaeus").style.display = "block";
-            document.getElementById("linnaeus").innerHTML = ret+'<br>&nbsp;';
+            content.push(document.createElement("br"), String.fromCharCode(160));
+            box.replaceChildren(...content);
+            box.style.display = "block";
             this.rendered = true;
           } else {
             document.getElementById("linnaeus").style.display = "none";

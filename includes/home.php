@@ -10,7 +10,7 @@
       <li>
         <a aria-label="Click here to search" onclick="searchAudioBlast()">
           <img class="audioblast-button"
-               src="https://cdn.audioblast.org/audioblast_flash_white.png"
+               src="<?php echo CDN_BASE; ?>/audioblast_flash_white.png"
                alt="audioBlast! Search"/>
         </a>
       </li>
@@ -51,13 +51,13 @@
 </div>
 
 <script>
-  fetch("https://api.audioblast.org/standalone/data/fetch_data_counts/?output=nakedJSON")
+  fetch(AB_API_BASE+"/standalone/data/fetch_data_counts/?output=nakedJSON")
     .then(response => response.json())
     .then( data => {
       document.getElementById("recordings").innerHTML = parseInt(data.counts.recordings).toLocaleString() + " recordings <span id='hours'></span>";
       document.getElementById("annomate").innerHTML = parseInt(data.counts.annomate).toLocaleString() + " annotations";
       document.getElementById("traits").innerHTML = parseInt(data.counts.traits).toLocaleString() + " traits";
-      fetch("https://api.audioblast.org/standalone/data/list_hours/?output=nakedJSON")
+      fetch(AB_API_BASE+"/standalone/data/list_hours/?output=nakedJSON")
         .then(response => response.json())
         .then(data => {
           document.getElementById("hours").innerHTML = "("+parseInt(data.hours).toLocaleString() + " hours: "
@@ -65,7 +65,7 @@
         });
     });
 
-  fetch("https://api.audioblast.org/standalone/analysis/fetch_analysis_counts/?output=nakedJSON")
+  fetch(AB_API_BASE+"/standalone/analysis/fetch_analysis_counts/?output=nakedJSON")
     .then(response => response.json())
     .then(data => {
       document.getElementById("analysiscount").innerHTML = parseInt(data.total).toLocaleString();
@@ -77,14 +77,14 @@
     <h2>Other ways to access</h2>
   </div>
   <div class="feature">
-    <img src="https://cdn.audioblast.org/python-logo-master-v3-TM.png"
+    <img src="<?php echo CDN_BASE; ?>/python-logo-master-v3-TM.png"
          class="feature-image"
          alt="Python programming language logo"/>
     <h3><a href="https://github.com/audioblast/abPython">abPython</a></h3>
       Python wrapper for audioBlast API
   </div>
   <div class="feature">
-    <img src="https://cdn.audioblast.org/Rlogo.png"
+    <img src="<?php echo CDN_BASE; ?>/Rlogo.png"
          class="feature-image"
          alt="R enivronment for statistical computing logo"/>
       <h3><a href="https://cran.r-project.org/package=sonicscrewdriver">SonicScrewdriveR</a></h3>

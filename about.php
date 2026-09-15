@@ -1,20 +1,24 @@
-<html>
+<?php include("includes/init.php"); ?>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <title>About audioBlast</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About audioBlast<?php print($in_dev?" (DEV)":""); ?></title>
   <link rel="stylesheet" href="/ab-api.css">
 </head>
 
 <body>
-  <div id="title">
-    <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
-    <h1>About audioBLAST!</h1>
+  <div id="title" role="banner">
+    <a href="/"><img src="<?php echo CDN_BASE; ?>/audioblast_flash.png" alt="audioBlast flash logo" class="audioblast-flash" /></a>
+    <h1>About audioBLAST!<?php print($in_dev?" (DEV)":""); ?></h1>
     <div id="menu">
       <?php include("includes/welcome.php"); ?>
     </div>
   </div>
 
-  <div class="feature-container">
+  <div class="feature-container" role="main">
     <div class="feature">
       <h2>Development</h2>
       <h3>Automated Acoustic Observatories</h3>
@@ -34,14 +38,39 @@
 
     <div class="feature">
       <h2>Data Contributors</h2>
+      <ul id="data-contributors"></ul>
     </div>
 
     <div class="feature">
       <h2>3rd Party Libraries</h2>
-      <h3>Tabulator</h3>
-      <h3>Plotly</h3>
-      <h3>zcjs</h3>
-      <h3>PhyMoji</h3>
+      <h3><a href="https://tabulator.info/">Tabulator</a></h3>
+      <p>Interactive tables on the web.</p>
+      <h3><a href="https://plotly.com/">Plotly</a></h3>
+      <p>Interactive charts.</p>
+      <h3><a href="https://github.com/BioAcoustica/zcjs">zcjs</a></h3>
+      <p>Displays zero-crossing audio files.</p>
+      <h3><a href="https://github.com/edwbaker/PhyMoji-PHP">PhyMoji</a></h3>
+      <p>Phylogenetic emoji search.</p>
     </div>
   </div>
+
+  <script>
+    fetch(<?php echo json_encode(API_BASE); ?> + "/standalone/modules/list_modules/?category=source&output=nakedJSON")
+      .then(response => {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.json();
+      })
+      .then(sources => {
+        if (!Array.isArray(sources)) throw new Error("Unexpected source list response");
+        const list = document.getElementById("data-contributors");
+        sources.forEach(source => {
+          const item = document.createElement("li");
+          item.textContent = source.hname;
+          list.appendChild(item);
+        });
+      })
+      .catch(err => console.error("Failed to load data contributors:", err));
+  </script>
+</body>
+
 </html>

@@ -53,7 +53,7 @@ const recordingSearch = {
       const parts = matched.split(":");
       const taxon = parts[2].replaceAll("'", "");
       const rank  = parts[3].replaceAll("'", "").toLowerCase();
-      var dataRequested = fetch("https://api.audioblast.org/data/recordingstaxa/?"+encodeURIComponent(rank)+"="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
+      var dataRequested = fetch(AB_API_BASE+"/data/recordingstaxa/?"+encodeURIComponent(rank)+"="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
