@@ -24,7 +24,7 @@ const fermat = {
           element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
           element.startsWith(":'trait':")
         ) {
-          document.getElementById("fermat").inerHTML = "";
+          document.getElementById("fermat").innerHTML = "";
           document.getElementById("fermat").style.display = "none";
           return;
         }
@@ -35,8 +35,9 @@ const fermat = {
       if (annotations.length > 0 ) {
         this.annotationsDisplay(annotations);
       } else {
-        document.getElementById("fermat").inerHTML = "";
+        document.getElementById("fermat").innerHTML = "";
         document.getElementById("fermat").style.display = "none";
+        this.current_display = "";
       }
     },
     annotationsDisplay(annotations) {
@@ -47,15 +48,14 @@ const fermat = {
           this.current_display=matched;
         }
         document.getElementById("fermat").style.display = "block";
-        parts = matched.split(":");
-        taxon = parts[2].replaceAll("'", "");
-        rank  = parts[3].replaceAll("'", "").toLowerCase();
-        var dataRequested = fetch("https://api.audioblast.org/data/annomate/?taxon="+taxon+"&page_size=1&output=nakedJSON")
+        const parts = matched.split(":");
+        const taxon = parts[2].replaceAll("'", "");
+        var dataRequested = fetch("https://api.audioblast.org/data/annomate/?taxon="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
             document.getElementById("fermat").innerHTML = '<h2>Annotations</h2><div id="annotations-tabulator" class="search-table"></div>';
-            eval('generateTabulator("#annotations-tabulator", "annomate", {field:"taxon", type:"=", value:"'+taxon+'"});');
+            generateTabulator("#annotations-tabulator", "annomate", {field:"taxon", type:"=", value:taxon});
           } else {
             document.getElementById("fermat").style.display = "none";
           }

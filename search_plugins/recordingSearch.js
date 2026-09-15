@@ -26,7 +26,7 @@ const recordingSearch = {
         element.startsWith(":'trait':") ||
         element.startsWith(":'trait_value':")
       ) {
-        document.getElementById("watson").inerHTML = "";
+        document.getElementById("watson").innerHTML = "";
         document.getElementById("watson").style.display = "none";
         return;
       }
@@ -37,8 +37,9 @@ const recordingSearch = {
     if (recordings.length > 0 ) {
       this.recordingsDisplay(recordings);
     } else {
-      document.getElementById("watson").inerHTML = "";
+      document.getElementById("watson").innerHTML = "";
       document.getElementById("watson").style.display = "none";
+      this.current_display = "";
     }
   },
   recordingsDisplay(recordings) {
@@ -49,15 +50,16 @@ const recordingSearch = {
         this.current_display=matched;
       }
       document.getElementById("watson").style.display = "block";
-      parts = matched.split(":");
-      taxon = parts[2].replaceAll("'", "");
-      rank  = parts[3].replaceAll("'", "").toLowerCase();
-      var dataRequested = fetch("https://api.audioblast.org/data/recordingstaxa/?"+rank+"="+taxon+"&page_size=1&output=nakedJSON")
+      const parts = matched.split(":");
+      const taxon = parts[2].replaceAll("'", "");
+      const rank  = parts[3].replaceAll("'", "").toLowerCase();
+      var dataRequested = fetch("https://api.audioblast.org/data/recordingstaxa/?"+encodeURIComponent(rank)+"="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
         if (data.length == 1) {
-          document.getElementById("watson").innerHTML = "<h2>Recordings of "+rank+" "+taxon+"</h2><div id='recordingstaxa-tabulator' class='search-table'></div>";
-          eval('generateTabulator("#recordingstaxa-tabulator", "recordingstaxa", {field:"'+rank+'", type:"=", value:"'+taxon+'"});');
+          document.getElementById("watson").innerHTML = "<h2></h2><div id='recordingstaxa-tabulator' class='search-table'></div>";
+          document.querySelector("#watson h2").textContent = "Recordings of "+rank+" "+taxon;
+          generateTabulator("#recordingstaxa-tabulator", "recordingstaxa", {field:rank, type:"=", value:taxon});
         } else {
           document.getElementById("watson").style.display = "none";
         }

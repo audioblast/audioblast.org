@@ -1,4 +1,10 @@
-<?php include("includes/init.php"); ?>
+<?php
+include("includes/init.php");
+if ($current_page == "about") {
+  header("Location: /about.php");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
