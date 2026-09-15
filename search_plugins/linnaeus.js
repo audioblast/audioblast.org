@@ -41,7 +41,7 @@ const linnaeus = {
       const passed_match = matched;
       var parts = matched.split(":");
       matched = parts[2].replaceAll("'", "");
-      this.query = fetch("https://api.audioblast.org/data/taxa/?taxon="+matched+"&output=nakedJSON")
+      this.query = fetch("https://api.audioblast.org/data/taxa/?taxon="+encodeURIComponent(matched)+"&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
@@ -67,7 +67,7 @@ const linnaeus = {
                   ret += " > ";
                 }
                 var name = italicise.includes(element) ? "<i>"+taxon_info[element]+"</i>" : taxon_info[element];
-                ret += '<a href="audioblast.php?search='+taxon_info[element]+'">'+name+"</a>";
+                ret += '<a href="audioblast.php?search='+encodeURIComponent(taxon_info[element])+'">'+name+"</a>";
                 first = false;
               }
             });
