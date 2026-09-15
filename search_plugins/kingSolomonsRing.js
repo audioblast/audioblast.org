@@ -17,6 +17,12 @@ const kingSolomonsRing = {
     name:"King Solomon's Ring",
     query: Promise.resolve(),
     current_display: "",
+    vocab: "https://vocab.audioblast.org",
+    //At most this many vocabulary terms are shown, and this many words and pairs of words looked up for each match
+    maxTerms: 5,
+    maxLookups: 20,
+    searches: new Map(),
+    terms: [],
     displayPrototype() {
       return {info: "susie", content: "solomon"};
     },
@@ -27,22 +33,124 @@ const kingSolomonsRing = {
       return div.innerHTML;
     },
 
-    showTraitInfo(data) {
-      const box = document.getElementById("susie");
-      const heading = document.createElement("h2");
-      heading.textContent = data.name;
-      const description = document.createElement("p");
-      description.textContent = data.description;
-      box.replaceChildren(heading, description);
-      if (/^https?:\/\//i.test(data.url)) {
-        const link = document.createElement("a");
-        link.href = data.url;
-        link.textContent = data.url;
+    //Look up each word, and each pair of words, of a match in the vocabulary, and show the terms whose names (or the
+    //names of their synonyms) are in it. Longer names are matched first, so "peak frequency" shows that term but not
+    //"frequency" as well. A match that is a term's short name also shows the term, and is tagged as a trait value for the
+    //traits box. Names aren't tagged, so a name that isn't a trait value doesn't hide the traits of taxa in the query.
+    findTerms(match, core) {
+      const words = String(match).replace(/:(?:'[^']*':)+/g, " ").split(/[^\p{L}\p{N}]+/u).filter(word => word != "");
+      const phrases = new Set();
+      words.forEach((word, i) => {
+        if (word.length > 2) {
+          phrases.add(word.toLowerCase());
+        }
+        if (i + 1 < words.length) {
+          phrases.add((word+" "+words[i + 1]).toLowerCase());
+        }
+      });
+      Promise.all(Array.from(phrases).slice(0, this.maxLookups).map(phrase => this.search(phrase)))
+      .then(results => {
+        const query = words.join(" ").toLowerCase();
+        let text = " "+query+" ";
+        results.flat()
+        .filter(suggestion => typeof suggestion.name == "string" && typeof suggestion.uri == "string" && suggestion.uri.startsWith(this.vocab+"/"))
+        .map(suggestion => ({suggestion: suggestion, name: this.words(suggestion.name), shortname: this.words(suggestion.shortname)}))
+        .filter(candidate => candidate.name != "")
+        .sort((a, b) => b.name.length - a.name.length)
+        .forEach(candidate => {
+          if (text.includes(" "+candidate.name+" ")) {
+            text = text.split(" "+candidate.name+" ").join(" | ");
+          } else if (candidate.shortname != query) {
+            return;
+          }
+          this.addTerm(candidate.suggestion);
+          if (candidate.shortname == query) {
+            core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
+          }
+        });
+      });
+    },
+
+    //The vocabulary's suggestions for a word or pair of words, each looked up only once
+    search(phrase) {
+      if (!this.searches.has(phrase)) {
+        this.searches.set(phrase, fetch(this.vocab+"/api/search/?q="+encodeURIComponent(phrase))
+        .then(res => res.json())
+        .then(data => Array.isArray(data) ? data : [])
+        .catch(error => []));
+      }
+      return this.searches.get(phrase);
+    },
+
+    //A name as lower case words separated by single spaces, as matches are compared
+    words(name) {
+      return String(name || "").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(word => word != "").join(" ");
+    },
+
+    addTerm(suggestion) {
+      if (this.terms.length >= this.maxTerms || this.terms.some(term => term.uri == suggestion.uri)) {
+        return;
+      }
+      const term = {
+        uri: suggestion.uri,
+        name: (suggestion.synonym_of != null) ? suggestion.synonym_of : suggestion.name,
+        synonym: (suggestion.synonym_of != null) ? suggestion.name : null,
+        definition: null
+      };
+      this.terms.push(term);
+      //The term's address gives its definition as plain text to clients that ask for JSON-LD
+      fetch(term.uri, {headers: {Accept: "application/ld+json"}})
+      .then(res => res.json())
+      .then(data => {
+        const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
+        const node = nodes.find(node => node["@id"] == term.uri);
+        term.definition = (node != null) ? this.literal(node["skos:definition"]) : null;
+      })
+      .catch(function (error) {
+      })
+      .finally(() => {
+        this.showTerms();
+      });
+    },
+
+    //The text of a JSON-LD literal, preferring English if there are several
+    literal(value) {
+      if (Array.isArray(value)) {
+        const english = value.find(item => item != null && item["@language"] == "en");
+        return this.literal((english != null) ? english : value[0]);
+      }
+      if (typeof value == "string") {
+        return value;
+      }
+      return (value != null && typeof value["@value"] == "string") ? value["@value"] : null;
+    },
+
+    //The vocabulary box is built from elements rather than HTML, so text from the vocabulary is never read as markup
+    showTerms() {
+      const content = [];
+      this.terms.forEach(term => {
+        content.push(this.element("h2", term.name));
+        if (term.synonym != null) {
+          content.push(this.element("p", "“"+term.synonym+"” is a synonym of "+term.name+"."));
+        }
+        if (term.definition != null) {
+          content.push(this.element("p", term.definition));
+        }
+        const link = this.element("a", term.uri);
+        link.href = term.uri;
         const linkParagraph = document.createElement("p");
         linkParagraph.appendChild(link);
-        box.appendChild(linkParagraph);
-      }
+        content.push(linkParagraph);
+      });
+      const box = document.getElementById("susie");
+      box.replaceChildren(...content);
       box.style.display = "block";
+    },
+
+    element(tagName, text) {
+      const element = document.createElement(tagName);
+      element.textContent = text;
+      return element;
     },
 
     parse(mode, match, core) {
@@ -63,26 +171,8 @@ const kingSolomonsRing = {
       });
 
       this.query.then(d => {
-        fetch("https://vocab.audioblast.org/api/term/?shortname="+encodeURIComponent(match))
-        .then(res => res.json())
-        .then(data => {
-          if (data != null && data.hasOwnProperty("shortname")) {
-            core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-            this.showTraitInfo(data);
-          } 
-        })
-      })
-      
-      this.query.then(d => {
-        fetch("https://vocab.audioblast.org/api/term/?name="+encodeURIComponent(match))
-        .then(res => res.json())
-        .then(data => {
-          if (data != null && data.hasOwnProperty("shortname")) {
-            core.replaceMatch(match, ":'trait_value':'"+match+"':", this.name);
-            this.showTraitInfo(data);
-          } 
-        })
-      })
+        this.findTerms(match, core);
+      });
 
       this.query.then(d => {
         fetch(AB_API_BASE+"/data/traits/?trait="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
