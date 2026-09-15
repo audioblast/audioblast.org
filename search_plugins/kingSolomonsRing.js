@@ -143,7 +143,7 @@ const kingSolomonsRing = {
       .then(data => {
         if (data.length == 1) {
           document.getElementById("solomon").innerHTML = '<h2>Traits for '+title+'</h2><div id="traits-tabulator" class="search-table"></div>';
-          eval('generateTabulator("#traits-tabulator", "traitstaxa",'+JSON.stringify(filters)+');');
+          generateTabulator("#traits-tabulator", "traitstaxa", filters.slice());
         } else {
           document.getElementById("solomon").style.display = "none";
         }
