@@ -38,6 +38,12 @@ Named after the Rosetta Stone.
 
 Processes information relating to annotations.
 
+### Pollux
+
+Finds terms from the [Bioacoustics & Ecoacoustics Glossary](https://glossary.acousti.cloud) in search queries and shows their definitions.
+
+Named after Julius Pollux, author of the Onomasticon.
+
 ## Credits
 
 Initial development of [audioBlast](https://audioblast.org) was supported by the Leverhulme Trust funded [Automated Acoustic Observatories](https://ebaker.me.uk/aao) project at the University of York.
