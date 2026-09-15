@@ -21,6 +21,12 @@ const kingSolomonsRing = {
       return {info: "susie", content: "solomon"};
     },
 
+    escapeHTML(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    },
+
     parse(mode, match, core) {
       if (match == "silent") {
         core.replaceMatch("silent", ":'named_trait_with_value':'Silent taxa':'Sound Production Method':'None':", this.name);
@@ -29,7 +35,7 @@ const kingSolomonsRing = {
 
       //TODO: Below use text_traits API
       this.query.then(d => {
-        fetch("https://api.audioblast.org/data/traits/?value="+match+"&page_size=1&output=nakedJSON")
+        fetch("https://api.audioblast.org/data/traits/?value="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
@@ -39,7 +45,7 @@ const kingSolomonsRing = {
       });
 
       this.query.then(d => {
-        fetch("https://vocab.audioblast.org/api/term/?shortname="+match)
+        fetch("https://vocab.audioblast.org/api/term/?shortname="+encodeURIComponent(match))
         .then(res => res.json())
         .then(data => {
           if (data != null && data.hasOwnProperty("shortname")) {
@@ -54,7 +60,7 @@ const kingSolomonsRing = {
       })
       
       this.query.then(d => {
-        fetch("https://vocab.audioblast.org/api/term/?name="+match)
+        fetch("https://vocab.audioblast.org/api/term/?name="+encodeURIComponent(match))
         .then(res => res.json())
         .then(data => {
           if (data != null && data.hasOwnProperty("shortname")) {
@@ -69,7 +75,7 @@ const kingSolomonsRing = {
       })
 
       this.query.then(d => {
-        fetch("https://api.audioblast.org/data/traits/?trait="+match+"&page_size=1&output=nakedJSON")
+        fetch("https://api.audioblast.org/data/traits/?trait="+encodeURIComponent(match)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length == 1) {
@@ -85,7 +91,7 @@ const kingSolomonsRing = {
       matched.forEach(element => {
         const parts = element.split(":");
         if (parts[1] == "'named_trait_with_value'") {
-          title += parts[2].replaceAll("'", "")+" ";
+          title += this.escapeHTML(parts[2].replaceAll("'", ""))+" ";
           filters.push({
             field: "trait",
             type: "=",
@@ -98,14 +104,14 @@ const kingSolomonsRing = {
           });
 
         } else if (parts[1] == "'trait_value'") {
-          title += parts[2].replaceAll("'", "")+" ";
+          title += this.escapeHTML(parts[2].replaceAll("'", ""))+" ";
           filters.push({
             field: "value",
             type: "=",
             value: parts[2].replaceAll("'", "")
           });
         } else if (parts[1] == "'trait'") {
-            title += parts[2].replaceAll("'", "")+" ";
+            title += this.escapeHTML(parts[2].replaceAll("'", ""))+" ";
             filters.push({
               field: "trait",
               type: "=",
@@ -114,9 +120,9 @@ const kingSolomonsRing = {
           } else if (parts[1] == "'taxon_with_rank'") {
             const italicise = ['genus', 'species'];
             if (italicise.includes(parts[3].replaceAll("'", ""))) {
-              title += "<i>"+parts[2].replaceAll("'", "")+"</i> ";
+              title += "<i>"+this.escapeHTML(parts[2].replaceAll("'", ""))+"</i> ";
             } else {
-              title += parts[2].replaceAll("'", "")+" ";
+              title += this.escapeHTML(parts[2].replaceAll("'", ""))+" ";
             }
             filters.push({
               field: parts[3].replaceAll("'", ""),
@@ -135,7 +141,7 @@ const kingSolomonsRing = {
 
     traitsDisplay(title, filters) {
       if (filters.length === 0) { return; }
-      let params = filters.map(element => `${element.field}=${element.value}`).join('&');
+      let params = filters.map(element => `${encodeURIComponent(element.field)}=${encodeURIComponent(element.value)}`).join('&');
       params = `?${params}`;
 
       this.query = dataRequested = fetch("https://api.audioblast.org/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")

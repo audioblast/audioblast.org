@@ -20,6 +20,7 @@ include("includes/init.php");
   <link rel="stylesheet" href="https://view.audioblast.org/progress.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
   <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+  <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
   <script type="text/javascript" src="/ab-tabulator.js"></script>
   <?php 
     //Load the search plugins

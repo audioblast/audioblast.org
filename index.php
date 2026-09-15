@@ -13,6 +13,7 @@ if ($current_page == "about") {
   <link rel="stylesheet" href="ab-api.css">
   <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
   <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
+  <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
   <script src="ab-tabulator.js"></script>
 </head>
 
