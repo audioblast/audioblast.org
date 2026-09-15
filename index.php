@@ -29,14 +29,24 @@
     ?>
     <ul class='ulhoriz' role='navigation' id='nav-menu'></ul>
     <script>
-      fetch("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON")
-        .then(response => response.json())
+      fetch(<?php echo json_encode(API_BASE); ?> + "/standalone/modules/list_modules/?category=data&output=nakedJSON")
+        .then(response => {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        })
         .then(types => {
+          if (!Array.isArray(types)) throw new Error("Unexpected module list response");
           const menu = document.getElementById('nav-menu');
           types.forEach(type => {
-            menu.innerHTML += "<li><a href='/?page=" + type.name + "'>" + type.hname + "</a></li>";
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = "/?page=" + encodeURIComponent(type.name);
+            a.textContent = type.hname;
+            li.appendChild(a);
+            menu.appendChild(li);
           });
-        });
+        })
+        .catch(err => console.error("Failed to load navigation menu:", err));
     </script>
     </div></div>
     <div id="data-table" role="main"></div>
