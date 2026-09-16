@@ -30,7 +30,7 @@
   <script>
     function searchAudioBlast() {
       const term = document.getElementById("search").value;
-      window.open("audioblast.php/?search="+term, "_self");
+      window.open("audioblast.php/?search="+encodeURIComponent(term), "_self");
     }
   </script>
 </div>
