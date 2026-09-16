@@ -19,20 +19,21 @@ const fermat = {
   
     display(mode, matched, core) {
       var annotations = Array();
+      var hasTrait = false;
       matched.forEach(element => {
         if (
           element.startsWith(":'named_trait_with_value':'Silent taxa':") ||
-          element.startsWith(":'trait':")
+          element.startsWith(":'trait':") ||
+          element.startsWith(":'trait_value':")
         ) {
-          document.getElementById("fermat").innerHTML = "";
-          document.getElementById("fermat").style.display = "none";
-          return;
+          hasTrait = true;
         }
         if (element.startsWith(":'taxon_with_rank':")) {
           annotations.push(element);
         }
       });
-      if (annotations.length > 0 ) {
+      // Annotations aren't shown for searches with a trait
+      if (annotations.length > 0 && !hasTrait) {
         this.annotationsDisplay(annotations);
       } else {
         document.getElementById("fermat").innerHTML = "";
@@ -53,6 +54,10 @@ const fermat = {
         var dataRequested = fetch(AB_API_BASE+"/data/annomate/?taxon="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
+          // Ignore the response if the box has since been emptied or moved on to another taxon
+          if (this.current_display != matched) {
+            return;
+          }
           if (data.length == 1) {
             document.getElementById("fermat").innerHTML = '<h2>Annotations</h2><div id="annotations-tabulator" class="search-table"></div>';
             generateTabulator("#annotations-tabulator", "annomate", {field:"taxon", type:"=", value:taxon});
