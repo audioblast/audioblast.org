@@ -65,6 +65,8 @@ const recordingSearch = {
           document.querySelector("#watson h2").textContent = "Recordings of "+rank+" "+taxon;
           generateTabulator("#recordingstaxa-tabulator", "recordingstaxa", {field:rank, type:"=", value:taxon});
         } else {
+          // Emptied as well as hidden, so a table for an earlier taxon stops loading
+          document.getElementById("watson").innerHTML = "";
           document.getElementById("watson").style.display = "none";
         }
       })
