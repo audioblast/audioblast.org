@@ -241,16 +241,23 @@ const kingSolomonsRing = {
 
     traitsDisplay(title, filters) {
       if (filters.length === 0) { return; }
+      const display = title + JSON.stringify(filters);
       let params = filters.map(element => `${encodeURIComponent(element.field)}=${encodeURIComponent(element.value)}`).join('&');
       params = `?${params}`;
 
       this.query = fetch(AB_API_BASE+"/data/traitstaxa/"+params+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
+        //Ignore the response if the traits box has since moved on to other traits or taxa
+        if (this.current_display != display) {
+          return;
+        }
         if (data.length == 1) {
           document.getElementById("solomon").innerHTML = '<h2>Traits for '+title+'</h2><div id="traits-tabulator" class="search-table"></div>';
           generateTabulator("#traits-tabulator", "traitstaxa", filters.slice());
         } else {
+          //Emptied as well as hidden, so a table from an earlier response stops loading
+          document.getElementById("solomon").innerHTML = "";
           document.getElementById("solomon").style.display = "none";
         }
       })
