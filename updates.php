@@ -3,7 +3,7 @@
 
 <head>
   <title>audioBlast Updates</title>
-  <link rel="stylesheet" href="/ab-api.css">
+  <?php echo versioned_stylesheets('ab-api.css'); ?>
 </head>
 
 <body>
