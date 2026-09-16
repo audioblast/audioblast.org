@@ -126,12 +126,16 @@ const searchAB = {
         var suggestion = Object.values(this.plugins)[i].searchSuggest();
         if (suggestion != false) {
           suggestion.forEach(e => {
-            const link = document.createElement("a");
-            link.textContent = e;
-            link.addEventListener("click", () => {
-              document.getElementById("search").value = e;
+            //A button, so the suggestion can be reached and chosen with the keyboard
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = e;
+            button.addEventListener("click", () => {
+              const search = document.getElementById("search");
+              search.value = e;
+              search.focus();
             });
-            document.getElementById(element).appendChild(link);
+            document.getElementById(element).appendChild(button);
           });
         }
       }

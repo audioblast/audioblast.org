@@ -96,7 +96,8 @@
   border-left: none;
 }
 
-#zoom-control li:hover {
+#zoom-control li:hover,
+#zoom-control li:focus-within {
   background: linear-gradient(135deg, var(--accent-color) 0%, #ea580c 100%);
   border-color: var(--accent-color);
   transform: scale(1.05);
@@ -107,6 +108,17 @@
   transform: scale(0.98);
 }
 
+/* The search button fills its square and takes its look from the li */
+#zoom-control button {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 #zoom-control li img {
   height: 100%;
   width: 100%;
@@ -114,6 +126,7 @@
   transition: var(--transition);
 }
 
-#zoom-control li:hover img {
+#zoom-control li:hover img,
+#zoom-control li:focus-within img {
   filter: brightness(1.2);
 }
