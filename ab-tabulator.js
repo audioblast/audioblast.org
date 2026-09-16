@@ -31,6 +31,10 @@ var generateTabulator = function(element, table, iFilter=[]) {
       if (xhr.status === 200) {
         var table = this.extraInfo[1];
         var element = this.extraInfo[0];
+        if (document.querySelector(element) === null) {
+          // The container was removed while the columns loaded, e.g. a search plugin emptied its box
+          return;
+        }
         var cols = null;
         try {
           cols = JSON.parse(this.responseText);
