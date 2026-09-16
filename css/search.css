@@ -61,19 +61,23 @@
   display: none;
 }
 
-#search-suggests-details a {
+#search-suggests-details button {
   cursor: pointer;
+  border: none;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: var(--text-light);
   margin: 4px;
   padding: 6px 12px;
   display: inline-block;
+  font-family: inherit;
   font-size: 0.875rem;
+  line-height: inherit;
   transition: var(--transition);
 }
 
-#search-suggests-details a:hover {
+#search-suggests-details button:hover,
+#search-suggests-details button:focus {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
