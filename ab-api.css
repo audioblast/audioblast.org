@@ -3,6 +3,9 @@
  * 
  * This file imports all modular CSS components.
  * Edit individual modules in the /css folder.
+ *
+ * Pages link these modules directly, in this order and with versioned URLs
+ * (versioned_stylesheets() in includes/init.php), so only add @import lines here.
  */
 
 @import url('css/variables.css');
