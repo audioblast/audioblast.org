@@ -21,7 +21,7 @@ include("includes/init.php");
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
   <script type="text/javascript" src="<?php echo TABULATOR_JS; ?>"></script>
   <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
-  <script type="text/javascript" src="/ab-tabulator.js"></script>
+  <script type="text/javascript" src="<?php echo versioned_asset('ab-tabulator.js'); ?>"></script>
   <?php 
     //Load the search plugins
     include("includes/load_search_js.php"); 

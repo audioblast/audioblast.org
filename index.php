@@ -14,7 +14,7 @@ if ($current_page == "about") {
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
   <script src="<?php echo TABULATOR_JS; ?>"></script>
   <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
-  <script src="ab-tabulator.js"></script>
+  <script src="<?php echo versioned_asset('ab-tabulator.js'); ?>"></script>
 </head>
 
 <body<?php if ($current_page != "home") echo ' class="data-page"'; ?>>
