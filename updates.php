@@ -1,21 +1,24 @@
 <?php include("includes/init.php"); ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <title>audioBlast Updates</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>audioBlast Updates<?php print($in_dev?" (DEV)":""); ?></title>
   <link rel="stylesheet" href="/ab-api.css">
 </head>
 
 <body>
-  <div id="title">
+  <div id="title" role="banner">
     <a href="/"><img src="<?php echo CDN_BASE; ?>/audioblast_flash.png" alt="audioBlast flash logo" class="audioblast-flash" /></a>
-    <h1>audioBLAST Updates</h1>
+    <h1>audioBLAST Updates<?php print($in_dev?" (DEV)":""); ?></h1>
     <div id="menu">
       <?php include("includes/welcome.php"); ?>
     </div>
   </div>
 
-  <div class="feature-container">
+  <div class="feature-container" role="main">
     <div class="feature">
       <h3>Week of 26th January 2026</h3>
       <ul>
@@ -37,12 +40,12 @@
         <li>Soundscapes view shows data from deployments.</li>
         <li>First data from BirdNET is now in the system.</li>
         <li>There is now an updates page.</li>
-        <li>Infrastrcture: Milvus database for testing vector search.</li>
+        <li>Infrastructure: Milvus database for testing vector search.</li>
         <li>Progressive uploads for deployments.</li>
         <li>Progressive uploads for annotations.</li>
       </ul>
     </div>
-
-    </div>
   </div>
+</body>
+
 </html>
