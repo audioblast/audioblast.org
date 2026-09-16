@@ -23,6 +23,8 @@ var generateTabulator = function(element, table, iFilter=[]) {
   if (!Array.isArray(iFilter)) {
     iFilter = [iFilter];
   }
+  // Found now, as a search plugin may replace the container with another of the same id while the columns load
+  var container = document.querySelector(element);
   var xhr = new XMLHttpRequest();
   xhr.open("GET", AB_API_BASE+"/data/"+table+"/columns/?output=nakedJSON", true);
   xhr.extraInfo = [element, table];
@@ -31,8 +33,8 @@ var generateTabulator = function(element, table, iFilter=[]) {
       if (xhr.status === 200) {
         var table = this.extraInfo[1];
         var element = this.extraInfo[0];
-        if (document.querySelector(element) === null) {
-          // The container was removed while the columns loaded, e.g. a search plugin emptied its box
+        if (container === null || !container.isConnected) {
+          // The container was removed while the columns loaded, e.g. a search plugin emptied or replaced its box
           return;
         }
         var cols = null;
@@ -68,7 +70,7 @@ var generateTabulator = function(element, table, iFilter=[]) {
               break;
           }
         }
-        var tabletabulator = new Tabulator(element, {
+        var tabletabulator = new Tabulator(container, {
            columns:parseColumns(cols),
            ajaxURL:ajaxURL,
            progressiveLoad:"scroll",
@@ -77,7 +79,15 @@ var generateTabulator = function(element, table, iFilter=[]) {
            dataSendParams:{
              "size":"page_size",
            },
-           initialFilter:initialFilters
+           initialFilter:initialFilters,
+           ajaxResponse:function(url, params, response) {
+             // Tabulator loads the next page while the rows don't fill the table, which is always the case once
+             // the container has been removed from the page, so a removed table stops at this page
+             if (!container.isConnected) {
+               response.last_page = params.page;
+             }
+             return response;
+           }
         });
         tabletabulator.on("rowDblClick", function(e, row){
           const data =row.getData();

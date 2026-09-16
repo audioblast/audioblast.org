@@ -19,6 +19,28 @@ function versioned_asset($path) {
   return '/' . $path . '?v=' . $version;
 }
 
+/**
+ * Links to the stylesheets a stylesheet @imports, in the same order and versioned
+ * as above, since an imported file's URL can't carry a version. Import paths are
+ * relative to the site root, where ab-api.css is. A stylesheet without @imports is
+ * linked itself.
+ */
+function versioned_stylesheets($path) {
+  $file = __DIR__ . '/../' . ltrim($path, '/');
+  $css = file_exists($file) ? file_get_contents($file) : '';
+  // Leave out any @import that is commented out
+  $css = preg_replace('#/\*.*?\*/#s', '', $css);
+  preg_match_all('/@import\s+url\(\s*[\'"]?([^\'")]+)/', $css, $matches);
+  $imports = (count($matches[1]) > 0) ? $matches[1] : array($path);
+  $links = array();
+  foreach ($imports as $import) {
+    // A stylesheet from another site is linked as it is
+    $href = preg_match('#^([a-z]+:)?//#i', $import) ? htmlspecialchars($import) : versioned_asset($import);
+    $links[] = '<link rel="stylesheet" href="' . $href . '">';
+  }
+  return implode("\n  ", $links) . "\n";
+}
+
 // Initial configuration
 $in_dev = FALSE;
 

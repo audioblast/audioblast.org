@@ -10,7 +10,7 @@ if ($current_page == "about") {
 
 <head>
   <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
-  <link rel="stylesheet" href="ab-api.css">
+  <?php echo versioned_stylesheets('ab-api.css'); ?>
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
   <script src="<?php echo TABULATOR_JS; ?>"></script>
   <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>

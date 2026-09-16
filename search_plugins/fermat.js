@@ -62,6 +62,8 @@ const fermat = {
             document.getElementById("fermat").innerHTML = '<h2>Annotations</h2><div id="annotations-tabulator" class="search-table"></div>';
             generateTabulator("#annotations-tabulator", "annomate", {field:"taxon", type:"=", value:taxon});
           } else {
+            // Emptied as well as hidden, so a table for an earlier taxon stops loading
+            document.getElementById("fermat").innerHTML = "";
             document.getElementById("fermat").style.display = "none";
           }
         })

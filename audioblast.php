@@ -16,7 +16,7 @@ include("includes/init.php");
 <html lang="en">
 <head>
   <title>audioBlast!<?php print($in_dev?" (DEV)":"")?></title>
-  <link rel="stylesheet" href="/ab-api.css">
+  <?php echo versioned_stylesheets('ab-api.css'); ?>
   <link rel="stylesheet" href="https://view.audioblast.org/progress.css">
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
   <script type="text/javascript" src="<?php echo TABULATOR_JS; ?>"></script>

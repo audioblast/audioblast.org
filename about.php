@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About audioBlast<?php print($in_dev?" (DEV)":""); ?></title>
-  <link rel="stylesheet" href="/ab-api.css">
+  <?php echo versioned_stylesheets('ab-api.css'); ?>
 </head>
 
 <body>
