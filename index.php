@@ -1,19 +1,26 @@
-<?php include("includes/init.php"); ?>
+<?php
+include("includes/init.php");
+if ($current_page == "about") {
+  header("Location: /about.php");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
   <link rel="stylesheet" href="ab-api.css">
-  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-  <script src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
-  <script src="ab-tabulator.js"></script>
+  <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
+  <script src="<?php echo TABULATOR_JS; ?>"></script>
+  <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
+  <script src="<?php echo versioned_asset('ab-tabulator.js'); ?>"></script>
 </head>
 
 <body<?php if ($current_page != "home") echo ' class="data-page"'; ?>>
 <div id="title" role="banner">
   <a href="/">
-    <img src="https://cdn.audioblast.org/audioblast_flash.png"
+    <img src="<?php echo CDN_BASE; ?>/audioblast_flash.png"
     alt="audioBlast flash logo"
     class="audioblast-flash" /></a>
   <h1>audioBlast Browser<?php print($in_dev?" (DEV)":"")?></h1>
@@ -29,14 +36,24 @@
     ?>
     <ul class='ulhoriz' role='navigation' id='nav-menu'></ul>
     <script>
-      fetch("https://api.audioblast.org/standalone/modules/list_modules/?category=data&output=nakedJSON")
-        .then(response => response.json())
+      fetch(<?php echo json_encode(API_BASE); ?> + "/standalone/modules/list_modules/?category=data&output=nakedJSON")
+        .then(response => {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        })
         .then(types => {
+          if (!Array.isArray(types)) throw new Error("Unexpected module list response");
           const menu = document.getElementById('nav-menu');
           types.forEach(type => {
-            menu.innerHTML += "<li><a href='/?page=" + type.name + "'>" + type.hname + "</a></li>";
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = "/?page=" + encodeURIComponent(type.name);
+            a.textContent = type.hname;
+            li.appendChild(a);
+            menu.appendChild(li);
           });
-        });
+        })
+        .catch(err => console.error("Failed to load navigation menu:", err));
     </script>
     </div></div>
     <div id="data-table" role="main"></div>

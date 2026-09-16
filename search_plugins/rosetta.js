@@ -12,7 +12,7 @@ const rosetta = {
   parse(mode, match, core) {
     const parts = match.split(" ");
     parts.forEach(match => {
-      this.query = fetch("https://api.audioblast.org/standalone/phymoji/get_taxon/?emoji="+match+"&output=nakedJSON")
+      this.query = fetch(AB_API_BASE+"/standalone/phymoji/get_taxon/?emoji="+encodeURIComponent(match)+"&output=nakedJSON")
         .then(res => res.json())
         .then(data => {
           if (data.length > 0) {

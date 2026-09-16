@@ -1,3 +1,18 @@
+// API base URL, set from includes/config.php by the page where available
+var AB_API_BASE = window.AB_API_BASE || "https://api.audioblast.org";
+
+/**
+ * Replace the contents of a table container with an error message
+ * @param  {String} element String specifying the table container element
+ * @param  {String} message message to display
+ */
+var showTableError = function(element, message) {
+  var container = document.querySelector(element);
+  if (container) {
+    container.textContent = message;
+  }
+}
+
 /**
  * Create a Tabulator for data from audioBlast API
  * @param  {String} element String specifying element to create Tabulator within
@@ -9,15 +24,29 @@ var generateTabulator = function(element, table, iFilter=[]) {
     iFilter = [iFilter];
   }
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://api.audioblast.org/data/"+table+"/columns/?output=nakedJSON", true);
+  xhr.open("GET", AB_API_BASE+"/data/"+table+"/columns/?output=nakedJSON", true);
   xhr.extraInfo = [element, table];
   xhr.onload = function (e) {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
         var table = this.extraInfo[1];
         var element = this.extraInfo[0];
-        var cols = JSON.parse(this.responseText);
-        var ajaxURL = 'https://api.audioblast.org/data/'+table+'/';
+        if (document.querySelector(element) === null) {
+          // The container was removed while the columns loaded, e.g. a search plugin emptied its box
+          return;
+        }
+        var cols = null;
+        try {
+          cols = JSON.parse(this.responseText);
+        } catch (err) {
+          // Handled below
+        }
+        if (!Array.isArray(cols)) {
+          console.error("Unexpected columns response for " + table + ": " + this.responseText.slice(0, 200));
+          showTableError(element, "Could not load this table. Please try again later.");
+          return;
+        }
+        var ajaxURL = AB_API_BASE+'/data/'+table+'/';
         var initialFilters = iFilter;
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
@@ -66,12 +95,14 @@ var generateTabulator = function(element, table, iFilter=[]) {
           }
         });
       } else {
-        console.error(xhr.statusText);
+        console.error("Failed to load columns for " + this.extraInfo[1] + ": HTTP " + xhr.status);
+        showTableError(this.extraInfo[0], "Could not load this table. Please try again later.");
       }
     }
   };
   xhr.onerror = function (e) {
-    console.error(xhr.statusText);
+    console.error("Failed to load columns for " + table + ": network error");
+    showTableError(element, "Could not load this table. Please try again later.");
   };
   xhr.send(null);
 }
@@ -112,15 +143,20 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
   var start = document.createElement("input");
   start.setAttribute("type", "number");
   start.setAttribute("placeholder", "Min");
-  start.setAttribute("min", 0);
-  start.setAttribute("max", 100);
   start.style.padding = "4px";
   start.style.width = "50%";
   start.style.boxSizing = "border-box";
 
-  start.value = cell.getValue();
+  //restore any existing range
+  var current = cell.getValue() || {};
+  start.value = current.start || "";
 
   function buildValues() {
+    if (start.value === "" && end.value === "") {
+      //clear the filter rather than sending an empty range
+      success("");
+      return;
+    }
     success({
       start:start.value,
       end:end.value,
@@ -139,6 +175,7 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
 
   end = start.cloneNode();
   end.setAttribute("placeholder", "Max");
+  end.value = current.end || "";
 
   start.addEventListener("change", buildValues);
   start.addEventListener("blur", buildValues);
@@ -157,19 +194,13 @@ var minMaxFilterEditor = function(cell, onRendered, success, cancel, editorParam
 
  //Custom min/max filter function
 function minMaxFilterFunction(headerValue, rowValue, rowData, filterParams){
-  if (rowValue) {
-    if (rowValue == null) {return false;}
-    if (headerValue.start != "") {
-      if (headerValue.end != "") {
-        return rowValue >= headerValue.start && rowValue <= headerValue.end;
-      } else {
-        return rowValue >= headerValue.start;
-      }
-    } else {
-      if (headerValue.end != "") {
-        return rowValue <= headerValue.end;
-      }
-    }
-  }
+  //compare as numbers; values arrive from the API as strings
+  var value = parseFloat(rowValue);
+  var min = parseFloat(headerValue.start);
+  var max = parseFloat(headerValue.end);
+  if (isNaN(min) && isNaN(max)) {return true;}
+  if (isNaN(value)) {return false;}
+  if (!isNaN(min) && value < min) {return false;}
+  if (!isNaN(max) && value > max) {return false;}
   return true; //must return a boolean, true if it passes the filter.
 }

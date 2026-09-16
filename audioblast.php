@@ -18,9 +18,10 @@ include("includes/init.php");
   <title>audioBlast!<?php print($in_dev?" (DEV)":"")?></title>
   <link rel="stylesheet" href="/ab-api.css">
   <link rel="stylesheet" href="https://view.audioblast.org/progress.css">
-  <link rel="stylesheet" href="https://cdn.audioblast.org/tabulator/dist/css/tabulator.min.css">
-  <script type="text/javascript" src="https://cdn.audioblast.org/tabulator/dist/js/tabulator.min.js"></script>
-  <script type="text/javascript" src="/ab-tabulator.js"></script>
+  <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
+  <script type="text/javascript" src="<?php echo TABULATOR_JS; ?>"></script>
+  <script>window.AB_API_BASE = <?php echo json_encode(API_BASE); ?>;</script>
+  <script type="text/javascript" src="<?php echo versioned_asset('ab-tabulator.js'); ?>"></script>
   <?php 
     //Load the search plugins
     include("includes/load_search_js.php"); 
@@ -29,7 +30,7 @@ include("includes/init.php");
 
 <body>
   <div id="title">
-    <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
+    <a href="/"><img src="<?php echo CDN_BASE; ?>/audioblast_flash.png" alt="audioBlast flash logo" class="audioblast-flash" /></a>
     <h1>audioBlast<?php print($in_dev?" (DEV)":"")?></h1>
     <div id="menu">
       <details>

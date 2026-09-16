@@ -1,3 +1,4 @@
+<?php include("includes/init.php"); ?>
 <html>
 
 <head>
@@ -7,7 +8,7 @@
 
 <body>
   <div id="title">
-    <a href="/"><img src="https://cdn.audioblast.org/audioblast_flash.png" class="audioblast-flash" /></a>
+    <a href="/"><img src="<?php echo CDN_BASE; ?>/audioblast_flash.png" alt="audioBlast flash logo" class="audioblast-flash" /></a>
     <h1>audioBLAST Updates</h1>
     <div id="menu">
       <?php include("includes/welcome.php"); ?>
@@ -16,7 +17,7 @@
 
   <div class="feature-container">
     <div class="feature">
-      <h3>Week of 26th Jnauary 2026</h3>
+      <h3>Week of 26th January 2026</h3>
       <ul>
         <li>Modernised UI for audioblast.org</li>
       </ul>

@@ -30,8 +30,10 @@ const searchAB = {
   },
 
   consoleLog(plugin, message) {
-    if (!(this.consoleContainer == null)) {
-      document.getElementById(this.consoleContainer).innerHTML += "["+plugin+"] "+message+"<br>";
+    const container = (this.consoleContainer == null) ? null : document.getElementById(this.consoleContainer);
+    if (container) {
+      container.appendChild(document.createTextNode("["+plugin+"] "+message));
+      container.appendChild(document.createElement("br"));
     }
   },
 
@@ -58,10 +60,18 @@ const searchAB = {
     this.matched[index] = new_match
     this.consoleLog((module==null)?this.name:module, "Replaced match: "+old_match+" with "+new_match);
 
-    if (!document.getElementById("pythia-term-"+encodeURI(old_match))) {
-      document.getElementById("pythia-terms").innerHTML += '<div id="pythia-term-'+encodeURI(old_match)+'">'+old_match+'</div>';
+    let term = document.getElementById("pythia-term-"+encodeURI(old_match));
+    if (!term) {
+      term = document.createElement("div");
+      term.id = "pythia-term-"+encodeURI(old_match);
+      term.textContent = old_match;
+      document.getElementById("pythia-terms").appendChild(term);
     }
-    document.getElementById("pythia-term-"+encodeURI(old_match)).innerHTML += ' => <span id="pythia-term-'+encodeURI(new_match)+'">'+new_match+'</div>';
+    const replacement = document.createElement("span");
+    replacement.id = "pythia-term-"+encodeURI(new_match);
+    replacement.textContent = new_match;
+    term.appendChild(document.createTextNode(" => "));
+    term.appendChild(replacement);
   
     this.query_remaining = this.query_remaining.replaceAll(old_match, "");
     this.query_remaining = this.query_remaining.replaceAll(new_match, "").trim();
@@ -80,6 +90,9 @@ const searchAB = {
 
   init() {
     var query_string = this.urlParams.get("search");
+    if (query_string == null) {
+      return;
+    }
     query_string = query_string.replaceAll("?", "");
 
     this.query_remaining = query_string;
@@ -113,8 +126,12 @@ const searchAB = {
         var suggestion = Object.values(this.plugins)[i].searchSuggest();
         if (suggestion != false) {
           suggestion.forEach(e => {
-            html = '<a onclick="{'+"document.getElementById('search').value = '"+e+"';}"+'">'+e+"</a>";
-            document.getElementById(element).innerHTML += html;
+            const link = document.createElement("a");
+            link.textContent = e;
+            link.addEventListener("click", () => {
+              document.getElementById("search").value = e;
+            });
+            document.getElementById(element).appendChild(link);
           });
         }
       }
@@ -124,12 +141,12 @@ const searchAB = {
   pythiaQueryCount: 0,
   pythia(match) {
     if (this.pythiaQueryCount == 0) {
-      document.getElementById("pythia-query").innerHTML = this.urlParams.get("search");
+      document.getElementById("pythia-query").textContent = this.urlParams.get("search");
     }
     this.pythiaQueryCount++;
     match = match.replace(/(:'([A-z]| |_)+')+:/, "");
     
-    this.query = fetch("https://api.audioblast.org/standalone/pythia/process/?query="+match)
+    this.query = fetch(AB_API_BASE+"/standalone/pythia/process/?query="+encodeURIComponent(match))
       .then(res => res.json())
       .then(data => {
         data = data.data;
