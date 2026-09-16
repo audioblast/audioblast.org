@@ -3,15 +3,15 @@
   $plugins = array();
   $files = glob("{search_plugins/*.js}",GLOB_BRACE);
   for($i = 0; $i < count($files); $i++){
-    echo '  <script type="text/javascript" src="/';
-    echo $files[$i];
+    echo '  <script type="text/javascript" src="';
+    echo versioned_asset($files[$i]);
     $filename_parts = explode("/", str_replace(".js", "",$files[$i]));
     $plugins[] = $filename_parts[1];
     echo '"/></script>'."\n";
   }
 ?>
 
-<script type="text/javascript" src="/ab-search.js"></script>
+<script type="text/javascript" src="<?php echo versioned_asset('ab-search.js'); ?>"></script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function(event) {

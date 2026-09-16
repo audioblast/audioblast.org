@@ -8,6 +8,17 @@
 // Load configuration
 require_once(__DIR__ . '/config.php');
 
+/**
+ * URL for a local static file with its modification time as a version, so
+ * browsers fetch a new copy after each deploy instead of reusing a cached one.
+ */
+function versioned_asset($path) {
+  $path = ltrim($path, '/');
+  $file = __DIR__ . '/../' . $path;
+  $version = file_exists($file) ? filemtime($file) : 0;
+  return '/' . $path . '?v=' . $version;
+}
+
 // Initial configuration
 $in_dev = FALSE;
 
