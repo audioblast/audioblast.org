@@ -12,7 +12,8 @@ through unharmed: most of a taxon's vernacular names have an apostrophe in some 
 
 Each search is a generation. Work belonging to an older one is dropped instead of racing the new
 one, and the requests it is waiting on are cancelled, so a plugin never has to recognise its own
-stale answers.
+stale answers. A plugin still working when that happens is abandoned at the next thing it asks
+for, rather than running on to the end of a turn nobody is waiting for.
 */
 
 const searchAB = {
@@ -228,7 +229,10 @@ const searchAB = {
         try {
           found = await plugin.recognise(search, this);
         } catch (error) {
-          this.consoleLog(plugin.name, "Could not read its source");
+          //A plugin abandoned because its search was replaced has not failed
+          if (!search.signal.aborted) {
+            this.consoleLog(plugin.name, "Could not read its source");
+          }
         }
         if (generation != this.generation) {
           return;
@@ -273,7 +277,10 @@ const searchAB = {
         try {
           await plugin.render(search, boxes, this);
         } catch (error) {
-          this.consoleLog(plugin.name, "Could not show its results");
+          //A plugin abandoned because its search was replaced has not failed
+          if (!search.signal.aborted) {
+            this.consoleLog(plugin.name, "Could not show its results");
+          }
         }
       }
       if (generation != this.generation) {
@@ -339,14 +346,31 @@ const searchAB = {
 /**
  * Fetch that belongs to a search: it is cancelled when a newer search starts, and an empty
  * answer is given for anything that goes wrong, so a plugin reads the result and nothing else.
+ *
+ * A request cancelled by a newer search is not an answer at all, though, empty or otherwise. The
+ * core only drops a search between one plugin and the next, so a plugin whose search is replaced
+ * partway through its turn runs on to the end of it: read that emptiness as an answer and it goes
+ * on to ask for more of what nobody will read. A cancelled request therefore abandons the plugin
+ * waiting on it rather than answering it, ending its turn at the first thing it asks for that no
+ * longer matters.
+ *
+ * Every request a search makes is made here, and nothing on the way back from one may answer for a
+ * failure of its own: that would take the abandoned plugin's turn back off it.
+ *
  * @param  {Object} search the search the request belongs to
  * @param  {String} url address to fetch
+ * @param  {Object} options anything else the request needs, such as the headers it sends
  * @return {Promise} the parsed JSON, or null
  */
-const searchFetch = function(search, url) {
-  return fetch(url, {signal: search.signal})
+const searchFetch = function(search, url, options) {
+  return fetch(url, Object.assign({}, options, {signal: search.signal}))
     .then(response => response.ok ? response.json() : null)
-    .catch(error => null);
+    .catch(error => {
+      if (search.signal.aborted) {
+        throw error;
+      }
+      return(null);
+    });
 }
 
 /**
@@ -611,8 +635,7 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
   //A term's address gives its definition as plain text to clients that ask for JSON-LD
   for (const term of found) {
     term.definition = await searchCache(search, plugin.definitions, term.uri, () =>
-      fetch(term.uri, {headers: {Accept: "application/ld+json"}, signal: search.signal})
-        .then(response => response.ok ? response.json() : null)
+      searchFetch(search, term.uri, {headers: {Accept: "application/ld+json"}})
         .then(data => {
           if (data == null) {
             return(null);
@@ -620,8 +643,7 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
           const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
           const node = nodes.find(one => one["@id"] == term.uri);
           return((node != null) ? vocabularyLiteral(node["skos:definition"]) : null);
-        })
-        .catch(error => null));
+        }));
   }
   return(found);
 }
