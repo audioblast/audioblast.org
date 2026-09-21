@@ -349,6 +349,45 @@ const searchFetch = function(search, url) {
     .catch(error => null);
 }
 
+/**
+ * A lookup a plugin remembers from one search to the next, so the same thing is only asked about
+ * once however many searches ask about it.
+ *
+ * A request a newer query cancels gives an empty answer rather than an error, and that emptiness is
+ * not an answer: remembered, it would be handed to every later search for the same thing. So an
+ * entry is dropped as its search is cancelled, before anything can read it, and is kept for good
+ * once its answer has arrived. A search that starts while an answer is still being waited on shares
+ * the wait; one that starts by cancelling that wait asks again.
+ *
+ * @param  {Object} search the search the lookup belongs to
+ * @param  {Map} held what the plugin has already looked up
+ * @param  {String} key what is being looked up
+ * @param  {Function} ask makes the promise of the answer, called only when it is not already held
+ * @return {Promise} the answer
+ */
+const searchCache = function(search, held, key, ask) {
+  //A recogniser runs on to the end of its turn after its search has been cancelled, as the core
+  //only drops the search between one plugin and the next. What it asks for then is asked of a
+  //cancelled request and comes back empty, so it is answered but never remembered.
+  if (search.signal.aborted) {
+    return(held.has(key) ? held.get(key) : ask());
+  }
+  if (!held.has(key)) {
+    const answer = ask();
+    const forget = function() {
+      //Only this answer: a later search may already have asked again under the same key
+      if (held.get(key) === answer) {
+        held.delete(key);
+      }
+      search.signal.removeEventListener("abort", forget);
+    };
+    held.set(key, answer);
+    search.signal.addEventListener("abort", forget);
+    answer.then(() => search.signal.removeEventListener("abort", forget), forget);
+  }
+  return(held.get(key));
+}
+
 //The ranks a classification is given at, from the highest to the lowest. A taxon is only used at
 //one of these, as its rank names the field recordings and traits are filtered by, and a field the
 //API doesn't know is ignored rather than refused: a taxon taken at a rank such as Complex would
@@ -411,19 +450,9 @@ const IS_ABOUT = "http://purl.obolibrary.org/obo/IAO_0000136";
  * @param  {Object} taxon the taxon annotation the rows are to be about
  * @return {Promise} the rows, each with the qualifiers of the links that led to it
  */
-const aboutTaxon = async function(search, plugin, module, taxon) {
+const aboutTaxon = function(search, plugin, module, taxon) {
   const held = module+"/"+taxon.classification["taxon"];
-  if (!plugin.asked.has(held)) {
-    plugin.asked.set(held, aboutTaxonRows(search, plugin, module, taxon));
-  }
-  const rows = await plugin.asked.get(held);
-  //A search cut off by a newer one has its requests cancelled, which reads as a taxon with nothing
-  //about it. That is not an answer worth keeping: it would be given to the search that replaced
-  //it, and to every later search of the same taxon.
-  if (search.signal.aborted) {
-    plugin.asked.delete(held);
-  }
-  return(rows);
+  return(searchCache(search, plugin.asked, held, () => aboutTaxonRows(search, plugin, module, taxon)));
 }
 
 //The lookups themselves, held by aboutTaxon so that each taxon is followed only once
@@ -546,12 +575,9 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
     }
   });
   const asked = Array.from(phrases).slice(0, plugin.maxLookups);
-  const answers = await Promise.all(asked.map(phrase => {
-    if (!plugin.searches.has(phrase)) {
-      plugin.searches.set(phrase, searchFetch(search, vocabulary+"/api/search/?q="+encodeURIComponent(phrase)));
-    }
-    return plugin.searches.get(phrase);
-  }));
+  const answers = await Promise.all(asked.map(phrase =>
+    searchCache(search, plugin.searches, phrase, () =>
+      searchFetch(search, vocabulary+"/api/search/?q="+encodeURIComponent(phrase)))));
 
   const spoken = " "+words.join(" ").toLowerCase()+" ";
   let left = spoken;
@@ -584,8 +610,8 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
 
   //A term's address gives its definition as plain text to clients that ask for JSON-LD
   for (const term of found) {
-    if (!plugin.definitions.has(term.uri)) {
-      plugin.definitions.set(term.uri, fetch(term.uri, {headers: {Accept: "application/ld+json"}, signal: search.signal})
+    term.definition = await searchCache(search, plugin.definitions, term.uri, () =>
+      fetch(term.uri, {headers: {Accept: "application/ld+json"}, signal: search.signal})
         .then(response => response.ok ? response.json() : null)
         .then(data => {
           if (data == null) {
@@ -596,8 +622,6 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
           return((node != null) ? vocabularyLiteral(node["skos:definition"]) : null);
         })
         .catch(error => null));
-    }
-    term.definition = await plugin.definitions.get(term.uri);
   }
   return(found);
 }
