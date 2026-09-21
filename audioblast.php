@@ -46,7 +46,7 @@ include("includes/init.php");
     <div id="pythia" class="feature">
       <h1 id="pythia-query"></h1>
       <details id="pythia-query-details">
-        <summary>Show replacement patterns</summary>
+        <summary>Show what was recognised</summary>
         <div id="pythia-terms"></div>
       </details>
     </div>
