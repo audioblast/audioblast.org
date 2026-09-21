@@ -20,17 +20,6 @@
 
   <div class="feature-container" role="main">
     <div class="feature">
-      <h3>Week of 21st September 2026</h3>
-      <ul>
-        <li>Every kind of data the API holds now has a page: descriptions, details, ecological
-            interactions, images, links, locations, onomatopoeia, references, specimens and
-            vernacular names have joined the browser.</li>
-        <li>Table filters suggest the values a field holds as you type them.</li>
-        <li>Recordings can be played from the table they are listed in.</li>
-        <li>Searches for a taxon held by more than one source show its recordings, traits and
-            annotations again.</li>
-        <li>The browser and search pages lay themselves out for a phone.</li>
-      </ul>
       <h3>Week of 26th January 2026</h3>
       <ul>
         <li>Modernised UI for audioblast.org</li>
