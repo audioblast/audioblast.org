@@ -149,6 +149,10 @@ var parseColumns = function(cols, table, moduleParams) {
     if (cols[i]["field"] == "filename") {
       playable = true;
     }
+    //vocabulary term addresses: trait_ontology in traits, url in traitstaxa
+    if (cols[i]["field"] == "trait_ontology" || cols[i]["field"] == "url") {
+      cols[i]["formatter"] = linkFormatter;
+    }
     if (cols[i]["headerFilter"] == "range") {
       cols[i]["headerFilter"] = minMaxFilterEditor;
       cols[i]["headerFilterFunc"] = minMaxFilterFunction;
@@ -334,6 +338,28 @@ var playRecording = function(data) {
     .catch(function (error) {
       // The browser may refuse a format it cannot play; its controls stay for the listener to try
     });
+}
+
+/**
+ * Tabulator formatter to show a web address as a link
+ * Only http and https addresses become links, so data can't create a javascript: link
+ * @param  {CellComponent} cell cell to format
+ * @return {Node|String} link, text, or a space for an empty cell
+ */
+var linkFormatter = function(cell) {
+  var value = cell.getValue();
+  if (value === null || value === undefined || value === "") {
+    //as Tabulator's plain text formatter does
+    return("&nbsp;");
+  }
+  value = String(value);
+  if (!/^https?:\/\//i.test(value)) {
+    return(document.createTextNode(value));
+  }
+  var link = document.createElement("a");
+  link.href = value;
+  link.textContent = value;
+  return(link);
 }
 
 /**
