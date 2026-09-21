@@ -71,14 +71,12 @@ var generateTabulator = function(element, table, iFilter=[]) {
           const params = Object.fromEntries(urlSearchParams.entries());
           const keys = Object.keys(params);
           if (keys.includes("page")) {
-            for (let i=0; i < keys.length; i++) {
-              switch(keys[i]) {
-                case "page":
-                  break;
-                default:
-                  initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
-              }
-            }
+            // `page` names the page of the site, not a filter, and whatever else the address
+            // carries is a filter only if the module can be filtered by it. The API refuses a
+            // filter it does not recognise, so a shared link arriving with utm_source or fbclid
+            // on it would otherwise take the whole table down with it.
+            keys.filter(key => key != "page" && canFilterBy(moduleParams, key))
+              .forEach(key => initialFilters.push({field:key, type:"=", value:params[key]}));
           }
           if (typeof(filterAB) !== 'undefined') {
             switch (element) {
@@ -133,6 +131,22 @@ var generateTabulator = function(element, table, iFilter=[]) {
     showTableError(element, "Could not load this table. Please try again later.");
   };
   xhr.send(null);
+}
+
+/**
+ * Whether a module can be filtered by a field, as its own parameters report it. A field it
+ * declares but gives no operator for cannot be filtered on, and the API refuses a filter on it
+ * just as it refuses one on a field it has never heard of.
+ * @param  {Object} moduleParams the module's parameters, from module_info
+ * @param  {String} field name of the field to filter by
+ * @return {Boolean} true if the API will honour a filter on the field
+ */
+var canFilterBy = function(moduleParams, field) {
+  const param = (moduleParams === null || typeof moduleParams !== "object") ? null : moduleParams[field];
+  if (param === null || typeof param !== "object") {
+    return(false);
+  }
+  return(param["op"] != null && param["op"] != "" && param["op"] != "none");
 }
 
 /**
