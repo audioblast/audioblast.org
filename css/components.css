@@ -130,3 +130,85 @@
 #zoom-control li:focus-within img {
   filter: brightness(1.2);
 }
+
+/* Recording Player */
+#ab-player {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+#ab-player-title {
+  flex: 1 1 200px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-light);
+}
+
+#ab-player-audio {
+  flex: 0 1 auto;
+  height: 36px;
+}
+
+#ab-player-close {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-medium);
+  color: var(--text-light);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#ab-player-close:hover,
+#ab-player-close:focus-visible {
+  background: var(--accent-color);
+}
+
+/* Play buttons within tables */
+.ab-play {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--primary-color);
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ab-play:hover,
+.ab-play:focus-visible {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--text-light);
+}
+
+/* Header filters that suggest the values a field holds */
+.ab-autocomplete {
+  display: block;
+}
+
+.ab-autocomplete input {
+  width: 100%;
+  padding: 4px;
+}

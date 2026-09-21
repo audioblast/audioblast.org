@@ -25,6 +25,18 @@ var generateTabulator = function(element, table, iFilter=[]) {
   }
   // Found now, as a search plugin may replace the container with another of the same id while the columns load
   var container = document.querySelector(element);
+  // The module's parameters say which of its fields can be suggested. Only the suggestions are
+  // lost if this fails, so the table is still built from whatever comes back.
+  var paramsRequested = fetch(AB_API_BASE+"/standalone/modules/module_info/?module="+encodeURIComponent(table)+"&output=nakedJSON")
+    .then(function(res) {
+      return res.json();
+    })
+    .then(function(info) {
+      return (info !== null && typeof info === "object" && info.params !== null && typeof info.params === "object") ? info.params : {};
+    })
+    .catch(function (error) {
+      return {};
+    });
   var xhr = new XMLHttpRequest();
   xhr.open("GET", AB_API_BASE+"/data/"+table+"/columns/?output=nakedJSON", true);
   xhr.extraInfo = [element, table];
@@ -48,61 +60,67 @@ var generateTabulator = function(element, table, iFilter=[]) {
           showTableError(element, "Could not load this table. Please try again later.");
           return;
         }
-        var ajaxURL = AB_API_BASE+'/data/'+table+'/';
-        var initialFilters = iFilter;
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        const keys = Object.keys(params);
-        if (keys.includes("page")) {
-          for (let i=0; i < keys.length; i++) {
-            switch(keys[i]) {
-              case "page":
-                break;
-              default:
-                initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
+        paramsRequested.then(function(moduleParams) {
+          // Checked again, as the container may have gone while the parameters loaded
+          if (container === null || !container.isConnected) {
+            return;
+          }
+          var ajaxURL = AB_API_BASE+'/data/'+table+'/';
+          var initialFilters = iFilter;
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          const params = Object.fromEntries(urlSearchParams.entries());
+          const keys = Object.keys(params);
+          if (keys.includes("page")) {
+            for (let i=0; i < keys.length; i++) {
+              switch(keys[i]) {
+                case "page":
+                  break;
+                default:
+                  initialFilters.push({field:keys[i], type:"=", value:params[keys[i]]});
+              }
             }
           }
-        }
-        if (typeof(filterAB) !== 'undefined') {
-          switch (element) {
-            case "#search-same-species":
-              initialFilters.push({field:"taxon", type:"=", value:filterAB['taxon']});
-              break;
-          }
-        }
-        var tabletabulator = new Tabulator(container, {
-           columns:parseColumns(cols),
-           ajaxURL:ajaxURL,
-           progressiveLoad:"scroll",
-           filterMode:"remote",
-           paginationSize:50,
-           dataSendParams:{
-             "size":"page_size",
-           },
-           initialFilter:initialFilters,
-           ajaxResponse:function(url, params, response) {
-             // Tabulator loads the next page while the rows don't fill the table, which is always the case once
-             // the container has been removed from the page, so a removed table stops at this page
-             if (!container.isConnected) {
-               response.last_page = params.page;
-             }
-             return response;
-           }
-        });
-        tabletabulator.on("rowDblClick", function(e, row){
-          const data =row.getData();
-          var url = null;
-          const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.get("page")=="recordings") {
-            url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
-          }
-          //audioBLAST page
           if (typeof(filterAB) !== 'undefined') {
-            url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+            switch (element) {
+              case "#search-same-species":
+                initialFilters.push({field:"taxon", type:"=", value:filterAB['taxon']});
+                break;
+            }
           }
-          if (url != null) {
-            window.open(url, "_self");
-          }
+          var tabletabulator = new Tabulator(container, {
+             columns:parseColumns(cols, table, moduleParams),
+             ajaxURL:ajaxURL,
+             progressiveLoad:"scroll",
+             filterMode:"remote",
+             paginationSize:50,
+             dataSendParams:{
+               "size":"page_size",
+             },
+             initialFilter:initialFilters,
+             ajaxResponse:function(url, params, response) {
+               // Tabulator loads the next page while the rows don't fill the table, which is always the case once
+               // the container has been removed from the page, so a removed table stops at this page
+               if (!container.isConnected) {
+                 response.last_page = params.page;
+               }
+               return response;
+             }
+          });
+          tabletabulator.on("rowDblClick", function(e, row){
+            const data =row.getData();
+            var url = null;
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("page")=="recordings") {
+              url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+            }
+            //audioBLAST page
+            if (typeof(filterAB) !== 'undefined') {
+              url = "https://view.audioblast.org/?source="+data['source']+"&id="+data['id'];
+            }
+            if (url != null) {
+              window.open(url, "_self");
+            }
+          });
         });
       } else {
         console.error("Failed to load columns for " + this.extraInfo[1] + ": HTTP " + xhr.status);
@@ -119,17 +137,203 @@ var generateTabulator = function(element, table, iFilter=[]) {
 
 /**
  * Parse columns from audioBlast to add specific Tabulator behaviour
- * @param  {Array} cols column information
+ * @param  {Array}  cols column information
+ * @param  {String} table name of the audioBlast table the columns are of
+ * @param  {Object} moduleParams the table's parameters, saying which fields can be suggested
  * @return {Array} modified column data
  */
-var parseColumns = function(cols) {
+var parseColumns = function(cols, table, moduleParams) {
+  moduleParams = (moduleParams === null || typeof moduleParams !== "object") ? {} : moduleParams;
+  var playable = false;
   for (var i = 0; i < cols.length; i++) {
+    if (cols[i]["field"] == "filename") {
+      playable = true;
+    }
     if (cols[i]["headerFilter"] == "range") {
       cols[i]["headerFilter"] = minMaxFilterEditor;
       cols[i]["headerFilterFunc"] = minMaxFilterFunction;
+      continue;
+    }
+    // A field the API can suggest values for gets a filter that offers them as they are typed
+    var param = moduleParams[cols[i]["field"]];
+    if (cols[i]["headerFilter"] && param != null && param["autocomplete"] === true) {
+      cols[i]["headerFilter"] = autocompleteFilterEditor(table, cols[i]["field"]);
     }
   }
+  if (playable) {
+    cols.unshift(playColumn());
+  }
   return(cols);
+}
+
+/**
+ * Header filter that suggests the values a field holds, from the API's autocomplete endpoint.
+ * The suggestions are a datalist, so the filter still takes any text typed into it.
+ * @param  {String} table name of the audioBlast table
+ * @param  {String} field name of the field to suggest values of
+ * @return {Function} a Tabulator header filter editor
+ */
+var autocompleteFilterEditor = function(table, field) {
+  return function(cell, onRendered, success, cancel, editorParams) {
+    var container = document.createElement("span");
+    container.className = "ab-autocomplete";
+    var input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("placeholder", "Filter...");
+    // Off, so the browser's own history does not cover the suggestions
+    input.setAttribute("autocomplete", "off");
+    var list = document.createElement("datalist");
+    list.id = "ab-suggestions-"+table+"-"+field;
+    input.setAttribute("list", list.id);
+    input.value = cell.getValue() || "";
+
+    // Only the newest request fills the list, so a slow answer never replaces a newer one
+    var generation = 0;
+    var suggesting = null;
+    var filtering = null;
+
+    function suggest() {
+      var value = input.value.trim();
+      if (value == "") {
+        list.replaceChildren();
+        return;
+      }
+      generation++;
+      var mine = generation;
+      fetch(AB_API_BASE+"/data/"+encodeURIComponent(table)+"/autocomplete/"+encodeURIComponent(field)+"/?c="+encodeURIComponent(value)+"&output=nakedJSON")
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(data) {
+          if (mine != generation || !Array.isArray(data)) {
+            return;
+          }
+          var options = [];
+          data.forEach(function(row) {
+            var suggestion = (row === null) ? null : row[field];
+            if (typeof suggestion == "string" && suggestion != "") {
+              var option = document.createElement("option");
+              option.value = suggestion;
+              options.push(option);
+            }
+          });
+          list.replaceChildren(...options);
+        })
+        .catch(function (error) {
+        });
+    }
+
+    function filter() {
+      success(input.value);
+    }
+
+    // Suggestions come while typing; the filter itself waits until the typing stops, so a word
+    // is not sent to the API a letter at a time
+    input.addEventListener("input", function() {
+      clearTimeout(suggesting);
+      clearTimeout(filtering);
+      suggesting = setTimeout(suggest, 200);
+      filtering = setTimeout(filter, 700);
+    });
+    input.addEventListener("change", function() {
+      clearTimeout(filtering);
+      filter();
+    });
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        clearTimeout(filtering);
+        filter();
+      }
+      if (e.key === "Escape") {
+        cancel();
+      }
+    });
+
+    container.appendChild(input);
+    container.appendChild(list);
+    return(container);
+  };
+}
+
+/**
+ * A column of buttons that play a recording, for tables whose rows carry the address of a file
+ * @return {Object} Tabulator column definition
+ */
+var playColumn = function() {
+  return {
+    title:"",
+    field:"ab_play",
+    headerSort:false,
+    width:44,
+    formatter:function(cell) {
+      const data = cell.getRow().getData();
+      if (!data["filename"]) {
+        return "";
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "ab-play";
+      button.textContent = "▶";
+      button.setAttribute("aria-label", "Play this recording");
+      button.addEventListener("click", function(e) {
+        e.stopPropagation();
+        playRecording(data);
+      });
+      return(button);
+    }
+  };
+}
+
+// The page's player, made when a recording is first played
+var abPlayer = null;
+
+/**
+ * The page's audio player, shared by every table on it, so that playing a recording stops the
+ * one playing before it
+ * @return {Object} the player's bar, title and audio elements
+ */
+var audioPlayer = function() {
+  if (abPlayer != null) {
+    return(abPlayer);
+  }
+  const bar = document.createElement("div");
+  bar.id = "ab-player";
+  const title = document.createElement("p");
+  title.id = "ab-player-title";
+  const audio = document.createElement("audio");
+  audio.id = "ab-player-audio";
+  audio.controls = true;
+  const close = document.createElement("button");
+  close.type = "button";
+  close.id = "ab-player-close";
+  close.textContent = "×";
+  close.setAttribute("aria-label", "Close the player");
+  close.addEventListener("click", function() {
+    audio.pause();
+    bar.style.display = "none";
+  });
+  bar.appendChild(title);
+  bar.appendChild(audio);
+  bar.appendChild(close);
+  document.body.appendChild(bar);
+  abPlayer = {bar:bar, title:title, audio:audio};
+  return(abPlayer);
+}
+
+/**
+ * Play a recording in the page's player
+ * @param  {Object} data the row the recording is in
+ */
+var playRecording = function(data) {
+  const player = audioPlayer();
+  // Text rather than markup, as the name comes from the recording's source
+  player.title.textContent = data["name"] || data["taxon"] || data["filename"];
+  player.audio.src = data["filename"];
+  player.bar.style.display = "flex";
+  player.audio.play()
+    .catch(function (error) {
+      // The browser may refuse a format it cannot play; its controls stay for the listener to try
+    });
 }
 
 /**
