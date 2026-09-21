@@ -46,7 +46,7 @@ $in_dev = FALSE;
 
 // Validate and sanitize page parameter
 $requested_page = isset($_GET["page"]) ? $_GET["page"] : "home";
-$current_page = in_array($requested_page, ALLOWED_PAGES) ? $requested_page : "home";
+$current_page = preg_match(PAGE_PATTERN, $requested_page) ? $requested_page : "home";
 
 // If ping page, return pong. This is used by status.acousti.cloud to check that
 // the server is up and returning HTML.
