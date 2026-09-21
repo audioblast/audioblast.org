@@ -9,6 +9,8 @@ if ($current_page == "about") {
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?php echo htmlspecialchars("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
   <?php echo versioned_stylesheets('ab-api.css'); ?>
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">

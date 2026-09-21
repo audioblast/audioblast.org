@@ -15,6 +15,8 @@ include("includes/init.php");
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>audioBlast!<?php print($in_dev?" (DEV)":"")?></title>
   <?php echo versioned_stylesheets('ab-api.css'); ?>
   <link rel="stylesheet" href="https://view.audioblast.org/progress.css">
@@ -47,7 +49,6 @@ include("includes/init.php");
         <summary>Show replacement patterns</summary>
         <div id="pythia-terms"></div>
       </details>
-      <div id="pythia-terms"></div>
     </div>
   </div>
   <div id="contentContainer" class="feature-container"></div>
