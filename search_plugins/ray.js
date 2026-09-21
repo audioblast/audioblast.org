@@ -32,10 +32,8 @@ const ray = {
     if (text.length < this.minLength) {
       return([]);
     }
-    if (!this.asked.has(text)) {
-      this.asked.set(text, await searchFetch(search, AB_API_BASE+"/data/vernacularnames/?vernacularName="+encodeURIComponent(text)+"&output=nakedJSON"));
-    }
-    const names = this.asked.get(text);
+    const names = await searchCache(search, this.asked, text, () =>
+      searchFetch(search, AB_API_BASE+"/data/vernacularnames/?vernacularName="+encodeURIComponent(text)+"&output=nakedJSON"));
     if (!Array.isArray(names)) {
       return([]);
     }
@@ -58,12 +56,9 @@ const ray = {
     return(found);
   },
 
-  async taxonOf(search, name) {
+  taxonOf(search, name) {
     const held = name["source"]+"/"+name["id"];
-    if (!this.taxa.has(held)) {
-      this.taxa.set(held, await this.follow(search, name));
-    }
-    return(this.taxa.get(held));
+    return(searchCache(search, this.taxa, held, () => this.follow(search, name)));
   },
 
   async follow(search, name) {

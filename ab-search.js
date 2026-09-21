@@ -12,7 +12,8 @@ through unharmed: most of a taxon's vernacular names have an apostrophe in some 
 
 Each search is a generation. Work belonging to an older one is dropped instead of racing the new
 one, and the requests it is waiting on are cancelled, so a plugin never has to recognise its own
-stale answers.
+stale answers. A plugin still working when that happens is abandoned at the next thing it asks
+for, rather than running on to the end of a turn nobody is waiting for.
 */
 
 const searchAB = {
@@ -228,7 +229,10 @@ const searchAB = {
         try {
           found = await plugin.recognise(search, this);
         } catch (error) {
-          this.consoleLog(plugin.name, "Could not read its source");
+          //A plugin abandoned because its search was replaced has not failed
+          if (!search.signal.aborted) {
+            this.consoleLog(plugin.name, "Could not read its source");
+          }
         }
         if (generation != this.generation) {
           return;
@@ -273,7 +277,10 @@ const searchAB = {
         try {
           await plugin.render(search, boxes, this);
         } catch (error) {
-          this.consoleLog(plugin.name, "Could not show its results");
+          //A plugin abandoned because its search was replaced has not failed
+          if (!search.signal.aborted) {
+            this.consoleLog(plugin.name, "Could not show its results");
+          }
         }
       }
       if (generation != this.generation) {
@@ -339,14 +346,70 @@ const searchAB = {
 /**
  * Fetch that belongs to a search: it is cancelled when a newer search starts, and an empty
  * answer is given for anything that goes wrong, so a plugin reads the result and nothing else.
+ *
+ * A request cancelled by a newer search is not an answer at all, though, empty or otherwise. The
+ * core only drops a search between one plugin and the next, so a plugin whose search is replaced
+ * partway through its turn runs on to the end of it: read that emptiness as an answer and it goes
+ * on to ask for more of what nobody will read. A cancelled request therefore abandons the plugin
+ * waiting on it rather than answering it, ending its turn at the first thing it asks for that no
+ * longer matters.
+ *
+ * Every request a search makes is made here, and nothing on the way back from one may answer for a
+ * failure of its own: that would take the abandoned plugin's turn back off it.
+ *
  * @param  {Object} search the search the request belongs to
  * @param  {String} url address to fetch
+ * @param  {Object} options anything else the request needs, such as the headers it sends
  * @return {Promise} the parsed JSON, or null
  */
-const searchFetch = function(search, url) {
-  return fetch(url, {signal: search.signal})
+const searchFetch = function(search, url, options) {
+  return fetch(url, Object.assign({}, options, {signal: search.signal}))
     .then(response => response.ok ? response.json() : null)
-    .catch(error => null);
+    .catch(error => {
+      if (search.signal.aborted) {
+        throw error;
+      }
+      return(null);
+    });
+}
+
+/**
+ * A lookup a plugin remembers from one search to the next, so the same thing is only asked about
+ * once however many searches ask about it.
+ *
+ * A request a newer query cancels gives an empty answer rather than an error, and that emptiness is
+ * not an answer: remembered, it would be handed to every later search for the same thing. So an
+ * entry is dropped as its search is cancelled, before anything can read it, and is kept for good
+ * once its answer has arrived. A search that starts while an answer is still being waited on shares
+ * the wait; one that starts by cancelling that wait asks again.
+ *
+ * @param  {Object} search the search the lookup belongs to
+ * @param  {Map} held what the plugin has already looked up
+ * @param  {String} key what is being looked up
+ * @param  {Function} ask makes the promise of the answer, called only when it is not already held
+ * @return {Promise} the answer
+ */
+const searchCache = function(search, held, key, ask) {
+  //A recogniser runs on to the end of its turn after its search has been cancelled, as the core
+  //only drops the search between one plugin and the next. What it asks for then is asked of a
+  //cancelled request and comes back empty, so it is answered but never remembered.
+  if (search.signal.aborted) {
+    return(held.has(key) ? held.get(key) : ask());
+  }
+  if (!held.has(key)) {
+    const answer = ask();
+    const forget = function() {
+      //Only this answer: a later search may already have asked again under the same key
+      if (held.get(key) === answer) {
+        held.delete(key);
+      }
+      search.signal.removeEventListener("abort", forget);
+    };
+    held.set(key, answer);
+    search.signal.addEventListener("abort", forget);
+    answer.then(() => search.signal.removeEventListener("abort", forget), forget);
+  }
+  return(held.get(key));
 }
 
 //The ranks a classification is given at, from the highest to the lowest. A taxon is only used at
@@ -388,6 +451,129 @@ const mostSpecificTaxon = function(search) {
     (TAXON_RANKS.indexOf(other.rank) > TAXON_RANKS.indexOf(best.rank)) ? other : best));
 }
 
+//What the links table says a row is the subject matter of
+const IS_ABOUT = "http://purl.obolibrary.org/obo/IAO_0000136";
+
+/**
+ * The rows of a module that are about a taxon.
+ *
+ * A description or a reference says what it is about through the links table rather than through a
+ * column of its own, and the link names the taxon by its id at a source. A name is held by every
+ * source that knows it and only some of those sources link to anything, so every row the name is
+ * held at is tried. The qualifier of the link is kept with the row it led to, as that is where a
+ * reference says what it holds for this taxon and not merely that it treats it.
+ *
+ * Nothing rolls up: a link is to one taxon, so asking about a genus gives what is about the genus
+ * itself and not what is about each of its species.
+ *
+ * Shared by Fabre and Sherborn, which read two modules the same way.
+ *
+ * @param  {Object} search the search the lookups belong to
+ * @param  {Object} plugin the plugin, which holds what it has already looked up
+ * @param  {String} module the module whose rows are wanted, e.g. descriptions
+ * @param  {Object} taxon the taxon annotation the rows are to be about
+ * @return {Promise} the rows, each with the qualifiers of the links that led to it
+ */
+const aboutTaxon = function(search, plugin, module, taxon) {
+  const held = module+"/"+taxon.classification["taxon"];
+  return(searchCache(search, plugin.asked, held, () => aboutTaxonRows(search, plugin, module, taxon)));
+}
+
+//The lookups themselves, held by aboutTaxon so that each taxon is followed only once
+const aboutTaxonRows = async function(search, plugin, module, taxon) {
+  const name = taxon.classification["taxon"];
+  //The request Linnaeus made of this name, so the browser answers it from its cache
+  const rows = await searchFetch(search, AB_API_BASE+"/data/taxa/?taxon="+encodeURIComponent(name)+"&output=nakedJSON");
+  if (!Array.isArray(rows)) {
+    return([]);
+  }
+  //Only the sources that hold the name at the rank it was taken at: one holding it as a complex,
+  //say, is a different thing that happens to be written the same way
+  const taxa = rows.filter(row => row != null && typeof row["rank"] == "string"
+    && row["rank"].toLowerCase() == taxon.rank);
+  const answers = await Promise.all(taxa.map(row => searchFetch(search, AB_API_BASE+"/data/links/"
+    +"?subject_type="+encodeURIComponent(module)
+    +"&object_type=taxa"
+    +"&object_source="+encodeURIComponent(row["source"])
+    +"&object_id="+encodeURIComponent(row["id"])
+    +"&predicate="+encodeURIComponent(IS_ABOUT)
+    +"&page_size="+encodeURIComponent(plugin.maxRows)
+    +"&output=nakedJSON")));
+
+  //A row is linked once for each thing it holds for the taxon, so the links are gathered by the
+  //row they point at and their qualifiers kept together
+  const wanted = new Map();
+  answers.filter(answer => Array.isArray(answer)).flat().forEach(link => {
+    if (link == null || link["subject_source"] == null || link["subject_id"] == null) {
+      return;
+    }
+    const key = link["subject_source"]+"/"+link["subject_id"];
+    if (!wanted.has(key)) {
+      wanted.set(key, {source: link["subject_source"], id: link["subject_id"], qualifiers: []});
+    }
+    const qualifiers = wanted.get(key).qualifiers;
+    if (typeof link["qualifier"] == "string" && link["qualifier"] != "" && !qualifiers.includes(link["qualifier"])) {
+      qualifiers.push(link["qualifier"]);
+    }
+  });
+
+  //One request each, as a module is filtered by one id at a time
+  const found = await Promise.all(Array.from(wanted.values()).slice(0, plugin.maxRows).map(async one => {
+    const answer = await searchFetch(search, AB_API_BASE+"/data/"+encodeURIComponent(module)+"/"
+      +"?source="+encodeURIComponent(one.source)
+      +"&id="+encodeURIComponent(one.id)
+      +"&output=nakedJSON");
+    if (!Array.isArray(answer)) {
+      return(null);
+    }
+    //By its source as well as its id, as a module is filtered by a source the name is part of
+    const row = answer.find(held => held != null && held["source"] == one.source);
+    return((row == null) ? null : Object.assign({qualifiers: one.qualifiers}, row));
+  }));
+  return(found.filter(row => row != null));
+}
+
+/**
+ * A heading naming a taxon, with the name in italics where it is one that is written that way
+ * @param  {String} lead what is being shown of it, e.g. "Descriptions of"
+ * @param  {Object} taxon the taxon annotation
+ * @return {Node} the heading
+ */
+const taxonHeading = function(lead, taxon) {
+  const heading = document.createElement("h2");
+  heading.appendChild(document.createTextNode(lead+" "+taxon.rank+" "));
+  const name = taxon.classification["taxon"];
+  if (["genus", "species"].includes(taxon.rank)) {
+    const italic = document.createElement("i");
+    italic.textContent = name;
+    heading.appendChild(italic);
+  } else {
+    heading.appendChild(document.createTextNode(name));
+  }
+  return(heading);
+}
+
+/**
+ * The name of a vocabulary term as words, read from the CamelCase at the end of its address: one
+ * ending DiagnosticDescription gives "Diagnostic description". A run of capitals is left as it is,
+ * so StridulatoryFileSEMImage gives "Stridulatory file SEM image".
+ *
+ * Read from the address because the controlled vocabularies that the topics of descriptions and
+ * the contents of references belong to do not resolve, so there is no label to ask them for.
+ *
+ * @param  {String} term the term's address, or the part of it after the #
+ * @return {String} the name as words
+ */
+const termWords = function(term) {
+  const words = String(term || "").split("#").pop()
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .split(/\s+/)
+    .filter(word => word != "");
+  //Lower case after the first word, but not a word that is written as an acronym
+  return(words.map((word, i) => (i == 0 || word == word.toUpperCase()) ? word : word.toLowerCase()).join(" "));
+}
+
 /**
  * The terms of a controlled vocabulary whose names, or the names of whose synonyms, are in a piece
  * of text. Each word and pair of words is looked up once, and longer names match first, so a
@@ -413,12 +599,9 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
     }
   });
   const asked = Array.from(phrases).slice(0, plugin.maxLookups);
-  const answers = await Promise.all(asked.map(phrase => {
-    if (!plugin.searches.has(phrase)) {
-      plugin.searches.set(phrase, searchFetch(search, vocabulary+"/api/search/?q="+encodeURIComponent(phrase)));
-    }
-    return plugin.searches.get(phrase);
-  }));
+  const answers = await Promise.all(asked.map(phrase =>
+    searchCache(search, plugin.searches, phrase, () =>
+      searchFetch(search, vocabulary+"/api/search/?q="+encodeURIComponent(phrase)))));
 
   const spoken = " "+words.join(" ").toLowerCase()+" ";
   let left = spoken;
@@ -451,9 +634,8 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
 
   //A term's address gives its definition as plain text to clients that ask for JSON-LD
   for (const term of found) {
-    if (!plugin.definitions.has(term.uri)) {
-      plugin.definitions.set(term.uri, fetch(term.uri, {headers: {Accept: "application/ld+json"}, signal: search.signal})
-        .then(response => response.ok ? response.json() : null)
+    term.definition = await searchCache(search, plugin.definitions, term.uri, () =>
+      searchFetch(search, term.uri, {headers: {Accept: "application/ld+json"}})
         .then(data => {
           if (data == null) {
             return(null);
@@ -461,10 +643,7 @@ const vocabularyTerms = async function(search, plugin, vocabulary, text) {
           const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
           const node = nodes.find(one => one["@id"] == term.uri);
           return((node != null) ? vocabularyLiteral(node["skos:definition"]) : null);
-        })
-        .catch(error => null));
-    }
-    term.definition = await plugin.definitions.get(term.uri);
+        }));
   }
   return(found);
 }

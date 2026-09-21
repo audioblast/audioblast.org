@@ -18,10 +18,8 @@ const pythia = {
     if (text == "") {
       return([]);
     }
-    if (!this.asked.has(text)) {
-      this.asked.set(text, await searchFetch(search, AB_API_BASE+"/standalone/pythia/process/?query="+encodeURIComponent(text)));
-    }
-    const answer = this.asked.get(text);
+    const answer = await searchCache(search, this.asked, text, () =>
+      searchFetch(search, AB_API_BASE+"/standalone/pythia/process/?query="+encodeURIComponent(text)));
     const taxa = (answer != null && answer.data != null && Array.isArray(answer.data.taxa)) ? answer.data.taxa : [];
     return(taxa
       .filter(taxon => typeof taxon.match == "string" && taxon.match.trim() != "")

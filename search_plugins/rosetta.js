@@ -17,11 +17,9 @@ const rosetta = {
       if (!/\p{Extended_Pictographic}/u.test(part)) {
         continue;
       }
-      if (!this.asked.has(part)) {
-        this.asked.set(part, await searchFetch(search, AB_API_BASE+"/standalone/phymoji/get_taxon/?emoji="+encodeURIComponent(part)+"&output=nakedJSON"));
-      }
       //An emoji Phymoji knows gives a name; one it doesn't gives an empty list
-      const taxon = this.asked.get(part);
+      const taxon = await searchCache(search, this.asked, part, () =>
+        searchFetch(search, AB_API_BASE+"/standalone/phymoji/get_taxon/?emoji="+encodeURIComponent(part)+"&output=nakedJSON"));
       if (typeof taxon == "string" && taxon.trim() != "") {
         found.push({type: "taxon", value: taxon, text: part});
       }

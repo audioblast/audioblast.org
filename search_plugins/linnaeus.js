@@ -21,10 +21,8 @@ const linnaeus = {
       if (taxon.classification != null) {
         continue;
       }
-      if (!this.looked.has(taxon.value)) {
-        this.looked.set(taxon.value, await searchFetch(search, AB_API_BASE+"/data/taxa/?taxon="+encodeURIComponent(taxon.value)+"&output=nakedJSON"));
-      }
-      const best = this.bestMatch(this.looked.get(taxon.value));
+      const best = this.bestMatch(await searchCache(search, this.looked, taxon.value, () =>
+        searchFetch(search, AB_API_BASE+"/data/taxa/?taxon="+encodeURIComponent(taxon.value)+"&output=nakedJSON")));
       if (best != null) {
         found.push({type: "taxon", value: taxon.value, rank: best["rank"].toLowerCase(), classification: best});
       }

@@ -44,6 +44,30 @@ Finds terms from the [Bioacoustics & Ecoacoustics Glossary](https://glossary.aco
 
 Named after Julius Pollux, author of the Onomasticon.
 
+### Ray
+
+Reads a common name in the query and finds the taxon it belongs to, so audioBlast can be searched in the words people actually use and not only in binomials.
+
+Named after John Ray, whose catalogues set the common names of plants and animals beside their scientific ones.
+
+### Watson
+
+Shows the recordings of a taxon.
+
+Named after Chris Watson, a sound recordist who has worked on many David Attenborough nature documentaries.
+
+### Fabre
+
+Shows what the sources say in prose about a taxon: how it behaves, where and when it calls, what it looks like and how it is told apart.
+
+Named after Jean-Henri Fabre, who described what insects do rather than only what they are.
+
+### Sherborn
+
+Shows the literature on a taxon, and what each reference holds for it.
+
+Named after Charles Davies Sherborn, whose *Index Animalium* recorded which publication had treated which animal name.
+
 ## Credits
 
 Initial development of [audioBlast](https://audioblast.org) was supported by the Leverhulme Trust funded [Automated Acoustic Observatories](https://ebaker.me.uk/aao) project at the University of York.

@@ -18,8 +18,8 @@ const kingSolomonsRing = {
   maxLookups: 20,
   searches: new Map(),
   definitions: new Map(),
-  //Every trait value the data is written with, fetched once
-  values: null,
+  //Every trait value the data is written with, fetched once and held under the one key
+  values: new Map(),
   probed: new Map(),
 
   boxes() {
@@ -34,20 +34,17 @@ const kingSolomonsRing = {
       //Asking which taxa are silent asks for a trait with a value, not for a value on its own
       found.push({type: "namedTraitValue", label: "Silent taxa", trait: "Sound Production Method", value: "None", text: text});
     } else if (text != "") {
-      if (this.values == null) {
-        const answer = await searchFetch(search, AB_API_BASE+"/data/traits/list_text_values/");
-        this.values = (answer != null && Array.isArray(answer.data)) ? answer.data : [];
-      }
+      const answer = await searchCache(search, this.values, "all", () =>
+        searchFetch(search, AB_API_BASE+"/data/traits/list_text_values/"));
+      const values = (answer != null && Array.isArray(answer.data)) ? answer.data : [];
       const spoken = text.toLowerCase();
-      const value = this.values.find(held => typeof held == "string" && held.toLowerCase() == spoken);
+      const value = values.find(held => typeof held == "string" && held.toLowerCase() == spoken);
       if (value != null) {
         found.push({type: "traitValue", value: value, text: text});
       }
       //A trait by its name, which the list of values does not hold
-      if (!this.probed.has(spoken)) {
-        this.probed.set(spoken, await searchFetch(search, AB_API_BASE+"/data/traits/?trait="+encodeURIComponent(text)+"&page_size=1&output=nakedJSON"));
-      }
-      const traits = this.probed.get(spoken);
+      const traits = await searchCache(search, this.probed, spoken, () =>
+        searchFetch(search, AB_API_BASE+"/data/traits/?trait="+encodeURIComponent(text)+"&page_size=1&output=nakedJSON"));
       if (Array.isArray(traits) && traits.length == 1 && typeof traits[0]["trait"] == "string") {
         found.push({type: "trait", trait: traits[0]["trait"], text: text});
       }
