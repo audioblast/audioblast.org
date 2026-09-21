@@ -18,6 +18,19 @@ const kingSolomonsRing = {
     query: Promise.resolve(),
     current_display: "",
     vocab: "https://vocab.audioblast.org",
+    //The ranks traits can be filtered by. A field the API doesn't know is ignored rather than
+    //refused, so filtering by any other rank would quietly show every trait as this taxon's.
+    ranks: [
+      "kingdom",
+      "class",
+      "order",
+      "suborder",
+      "family",
+      "subfamily",
+      "tribe",
+      "genus",
+      "species"
+    ],
     //At most this many vocabulary terms are shown, and this many words and pairs of words looked up for each match
     maxTerms: 5,
     maxLookups: 20,
@@ -218,14 +231,18 @@ const kingSolomonsRing = {
               value: parts[2].replaceAll("'", "")
             });
           } else if (parts[1] == "'taxon_with_rank'") {
+            const rank = parts[3].replaceAll("'", "");
+            if (!this.ranks.includes(rank)) {
+              return;
+            }
             const italicise = ['genus', 'species'];
-            if (italicise.includes(parts[3].replaceAll("'", ""))) {
+            if (italicise.includes(rank)) {
               title += "<i>"+this.escapeHTML(parts[2].replaceAll("'", ""))+"</i> ";
             } else {
               title += this.escapeHTML(parts[2].replaceAll("'", ""))+" ";
             }
             filters.push({
-              field: parts[3].replaceAll("'", ""),
+              field: rank,
               type: "=",
               value: parts[2].replaceAll("'", "")
             });

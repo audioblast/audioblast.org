@@ -11,6 +11,19 @@ const recordingSearch = {
   name:"Watson",
   query: Promise.resolve(),
   current_display: "",
+  //The ranks recordings can be filtered by. A field the API doesn't know is ignored rather than
+  //refused, so filtering by any other rank would quietly show every recording as this taxon's.
+  ranks: [
+    "kingdom",
+    "class",
+    "order",
+    "suborder",
+    "family",
+    "subfamily",
+    "tribe",
+    "genus",
+    "species"
+  ],
   displayPrototype() {
     const ret = {content:"watson"};
     return(ret);
@@ -49,10 +62,16 @@ const recordingSearch = {
       } else {
         this.current_display=matched;
       }
-      document.getElementById("watson").style.display = "block";
       const parts = matched.split(":");
       const taxon = parts[2].replaceAll("'", "");
       const rank  = parts[3].replaceAll("'", "").toLowerCase();
+      if (!this.ranks.includes(rank)) {
+        // Emptied as well as hidden, so a table for an earlier taxon stops loading
+        document.getElementById("watson").innerHTML = "";
+        document.getElementById("watson").style.display = "none";
+        return;
+      }
+      document.getElementById("watson").style.display = "block";
       var dataRequested = fetch(AB_API_BASE+"/data/recordingstaxa/?"+encodeURIComponent(rank)+"="+encodeURIComponent(taxon)+"&page_size=1&output=nakedJSON")
       .then(res => res.json())
       .then(data => {
@@ -75,4 +94,3 @@ const recordingSearch = {
     });
   }
 }
-  

@@ -9,7 +9,9 @@ if ($current_page == "about") {
 <html lang="en">
 
 <head>
-  <title><?php print("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><?php echo htmlspecialchars("audioBlast: ".$current_page.($in_dev?" (DEV)":"")); ?></title>
   <?php echo versioned_stylesheets('ab-api.css'); ?>
   <link rel="stylesheet" href="<?php echo TABULATOR_CSS; ?>">
   <script src="<?php echo TABULATOR_JS; ?>"></script>
@@ -58,7 +60,7 @@ if ($current_page == "about") {
     </div></div>
     <div id="data-table" role="main"></div>
     <script>
-      generateTabulator("#data-table", "<?php print($current_page); ?>");
+      generateTabulator("#data-table", <?php echo json_encode($current_page); ?>);
     </script>
     <?php
   }
