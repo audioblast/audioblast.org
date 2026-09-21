@@ -1,56 +1,49 @@
 /*
 Carson plugin for searchAB
 
-The Carson plugin for searchAB is a plugin that tidies the user's search query in
-order to alow for further processing. As an example it will process the term 
-"tremulating orthoptera" to "tremulation" which has a direct match in the audioBlast
-vocabulary. A second example is converting the user query "how far can you hear" to the
-vocabulary term "sound propagation distance" which has a direct match in the audioBlast
-vocabulary.
+The Carson plugin tidies the user's query so the rest can work on it: it turns the way a question
+is asked into the trait it is asking about, so "how far can you hear" becomes the trait
+"Sound propagation distance (m)", and a word such as "tremulating" becomes the trait value
+"Tremulation" that the data is written with.
 
-The plugin is named after Mr Carson, the butler in Downton Abbey, who is known for his
-tidiness and attention to detail.
+The plugin is named after Mr Carson, the butler in Downton Abbey, who is known for his tidiness
+and attention to detail.
 */
-
 const carson = {
-  name:"Carson",
-  query:  Promise.resolve(),
-  parse(mode, match, core) {
-    this.query.then(this.doParse(mode, match, core));
-  },
-  
-  doParse(mode, match, core) {
-    match = match.toLowerCase();
-    const parts = match.split(" ");
-    parts.forEach(match => {
-      if (match.toLowerCase().startsWith("tremulat")) {
-        core.replaceMatch(match, "Tremulation", this.name);
-        return;
-      }
-      if (match.toLowerCase().startsWith("crepitat")) {
-        core.replaceMatch(match, "Crepitation", this.name);
-        return;
+  name: "Carson",
+
+  //How a question might be asked, and the trait it asks about
+  questions: [
+    {asked: "how far", trait: "Sound propagation distance (m)"},
+    {asked: "what distance", trait: "Sound propagation distance (m)"},
+    {asked: "what frequency", trait: "Peak Frequency (kHz)"}
+  ],
+
+  //How a word might be written, and the trait value the data writes it as
+  words: [
+    {start: "tremulat", value: "Tremulation"},
+    {start: "crepitat", value: "Crepitation"}
+  ],
+
+  recognise(search) {
+    const text = search.remaining().toLowerCase();
+    const found = [];
+    this.questions.forEach(question => {
+      if (text.includes(question.asked)) {
+        found.push({type: "trait", trait: question.trait, text: question.asked});
       }
     });
-
-    if (match.includes("how far")) {
-      core.replaceMatch("how far", ":'trait':'Sound propagation distance (m)':", this.name);
-      return;
-    }
-    if (match.includes("what distance")) {
-      core.replaceMatch("what distance", "'trait':'Sound propagation distance (m)':", this.name);
-      return;
-    }
-    if (match.includes("what frequency")) {
-      core.replaceMatch("what frequency", ":'trait':'Peak Frequency (kHz)':", this.name);
-      return;
-    }
-
+    text.split(/\s+/).forEach(word => {
+      this.words.forEach(known => {
+        if (word.startsWith(known.start)) {
+          found.push({type: "traitValue", value: known.value, text: word});
+        }
+      });
+    });
+    return(found);
   },
 
-  display() {},
-
-  searchSuggest(){
+  searchSuggest() {
     return([
       "How far away can you hear bullacris membracioides?",
       "What frequency is Gryllotalpa vineae?"

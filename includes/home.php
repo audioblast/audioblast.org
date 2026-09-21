@@ -4,15 +4,15 @@
          placeholder="Search..."
          aria-label="Enter search terms" 
          autocomplete="off"
-         onkeydown="if (event.keyCode == 13) { searchAudioBlast(); }">
+         onkeydown="if (event.key === 'Enter') { searchAudioBlast(); }">
   <div id="zoom-control" class="search-control">
     <ul class="ulhoriz">
       <li>
-        <a aria-label="Click here to search" onclick="searchAudioBlast()">
+        <button type="button" aria-label="Search" onclick="searchAudioBlast()">
           <img class="audioblast-button"
                src="<?php echo CDN_BASE; ?>/audioblast_flash_white.png"
                alt="audioBlast! Search"/>
-        </a>
+        </button>
       </li>
     </ul>
   </div>
