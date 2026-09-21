@@ -388,6 +388,139 @@ const mostSpecificTaxon = function(search) {
     (TAXON_RANKS.indexOf(other.rank) > TAXON_RANKS.indexOf(best.rank)) ? other : best));
 }
 
+//What the links table says a row is the subject matter of
+const IS_ABOUT = "http://purl.obolibrary.org/obo/IAO_0000136";
+
+/**
+ * The rows of a module that are about a taxon.
+ *
+ * A description or a reference says what it is about through the links table rather than through a
+ * column of its own, and the link names the taxon by its id at a source. A name is held by every
+ * source that knows it and only some of those sources link to anything, so every row the name is
+ * held at is tried. The qualifier of the link is kept with the row it led to, as that is where a
+ * reference says what it holds for this taxon and not merely that it treats it.
+ *
+ * Nothing rolls up: a link is to one taxon, so asking about a genus gives what is about the genus
+ * itself and not what is about each of its species.
+ *
+ * Shared by Fabre and Sherborn, which read two modules the same way.
+ *
+ * @param  {Object} search the search the lookups belong to
+ * @param  {Object} plugin the plugin, which holds what it has already looked up
+ * @param  {String} module the module whose rows are wanted, e.g. descriptions
+ * @param  {Object} taxon the taxon annotation the rows are to be about
+ * @return {Promise} the rows, each with the qualifiers of the links that led to it
+ */
+const aboutTaxon = async function(search, plugin, module, taxon) {
+  const held = module+"/"+taxon.classification["taxon"];
+  if (!plugin.asked.has(held)) {
+    plugin.asked.set(held, aboutTaxonRows(search, plugin, module, taxon));
+  }
+  const rows = await plugin.asked.get(held);
+  //A search cut off by a newer one has its requests cancelled, which reads as a taxon with nothing
+  //about it. That is not an answer worth keeping: it would be given to the search that replaced
+  //it, and to every later search of the same taxon.
+  if (search.signal.aborted) {
+    plugin.asked.delete(held);
+  }
+  return(rows);
+}
+
+//The lookups themselves, held by aboutTaxon so that each taxon is followed only once
+const aboutTaxonRows = async function(search, plugin, module, taxon) {
+  const name = taxon.classification["taxon"];
+  //The request Linnaeus made of this name, so the browser answers it from its cache
+  const rows = await searchFetch(search, AB_API_BASE+"/data/taxa/?taxon="+encodeURIComponent(name)+"&output=nakedJSON");
+  if (!Array.isArray(rows)) {
+    return([]);
+  }
+  //Only the sources that hold the name at the rank it was taken at: one holding it as a complex,
+  //say, is a different thing that happens to be written the same way
+  const taxa = rows.filter(row => row != null && typeof row["rank"] == "string"
+    && row["rank"].toLowerCase() == taxon.rank);
+  const answers = await Promise.all(taxa.map(row => searchFetch(search, AB_API_BASE+"/data/links/"
+    +"?subject_type="+encodeURIComponent(module)
+    +"&object_type=taxa"
+    +"&object_source="+encodeURIComponent(row["source"])
+    +"&object_id="+encodeURIComponent(row["id"])
+    +"&predicate="+encodeURIComponent(IS_ABOUT)
+    +"&page_size="+encodeURIComponent(plugin.maxRows)
+    +"&output=nakedJSON")));
+
+  //A row is linked once for each thing it holds for the taxon, so the links are gathered by the
+  //row they point at and their qualifiers kept together
+  const wanted = new Map();
+  answers.filter(answer => Array.isArray(answer)).flat().forEach(link => {
+    if (link == null || link["subject_source"] == null || link["subject_id"] == null) {
+      return;
+    }
+    const key = link["subject_source"]+"/"+link["subject_id"];
+    if (!wanted.has(key)) {
+      wanted.set(key, {source: link["subject_source"], id: link["subject_id"], qualifiers: []});
+    }
+    const qualifiers = wanted.get(key).qualifiers;
+    if (typeof link["qualifier"] == "string" && link["qualifier"] != "" && !qualifiers.includes(link["qualifier"])) {
+      qualifiers.push(link["qualifier"]);
+    }
+  });
+
+  //One request each, as a module is filtered by one id at a time
+  const found = await Promise.all(Array.from(wanted.values()).slice(0, plugin.maxRows).map(async one => {
+    const answer = await searchFetch(search, AB_API_BASE+"/data/"+encodeURIComponent(module)+"/"
+      +"?source="+encodeURIComponent(one.source)
+      +"&id="+encodeURIComponent(one.id)
+      +"&output=nakedJSON");
+    if (!Array.isArray(answer)) {
+      return(null);
+    }
+    //By its source as well as its id, as a module is filtered by a source the name is part of
+    const row = answer.find(held => held != null && held["source"] == one.source);
+    return((row == null) ? null : Object.assign({qualifiers: one.qualifiers}, row));
+  }));
+  return(found.filter(row => row != null));
+}
+
+/**
+ * A heading naming a taxon, with the name in italics where it is one that is written that way
+ * @param  {String} lead what is being shown of it, e.g. "Descriptions of"
+ * @param  {Object} taxon the taxon annotation
+ * @return {Node} the heading
+ */
+const taxonHeading = function(lead, taxon) {
+  const heading = document.createElement("h2");
+  heading.appendChild(document.createTextNode(lead+" "+taxon.rank+" "));
+  const name = taxon.classification["taxon"];
+  if (["genus", "species"].includes(taxon.rank)) {
+    const italic = document.createElement("i");
+    italic.textContent = name;
+    heading.appendChild(italic);
+  } else {
+    heading.appendChild(document.createTextNode(name));
+  }
+  return(heading);
+}
+
+/**
+ * The name of a vocabulary term as words, read from the CamelCase at the end of its address: one
+ * ending DiagnosticDescription gives "Diagnostic description". A run of capitals is left as it is,
+ * so StridulatoryFileSEMImage gives "Stridulatory file SEM image".
+ *
+ * Read from the address because the controlled vocabularies that the topics of descriptions and
+ * the contents of references belong to do not resolve, so there is no label to ask them for.
+ *
+ * @param  {String} term the term's address, or the part of it after the #
+ * @return {String} the name as words
+ */
+const termWords = function(term) {
+  const words = String(term || "").split("#").pop()
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .split(/\s+/)
+    .filter(word => word != "");
+  //Lower case after the first word, but not a word that is written as an acronym
+  return(words.map((word, i) => (i == 0 || word == word.toUpperCase()) ? word : word.toLowerCase()).join(" "));
+}
+
 /**
  * The terms of a controlled vocabulary whose names, or the names of whose synonyms, are in a piece
  * of text. Each word and pair of words is looked up once, and longer names match first, so a

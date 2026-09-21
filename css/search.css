@@ -114,3 +114,22 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
+
+/* Descriptions and references, which are read as prose and citations rather than as tables.
+   Named with the box's own class as well, as .feature p is the more specific of the two. */
+.feature .search-attribution {
+  font-size: 0.8125rem;
+  margin-top: 2px;
+}
+
+/* The line saying where a description came from belongs to the prose above it, not between it and
+   the next one. Both margins give way, as the gap between them is the larger of the two. A
+   browser without :has() spaces it as it would any other paragraph. */
+.feature p:has(+ .search-attribution) {
+  margin-bottom: 0;
+}
+
+.search-citation .search-holds {
+  display: block;
+  font-size: 0.8125rem;
+}
