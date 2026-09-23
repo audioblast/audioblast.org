@@ -412,10 +412,19 @@ const searchCache = function(search, held, key, ask) {
   return(held.get(key));
 }
 
-//The ranks a classification is given at, from the highest to the lowest. A taxon is only used at
-//one of these, as its rank names the field recordings and traits are filtered by, and a field the
-//API doesn't know is ignored rather than refused: a taxon taken at a rank such as Complex would
-//quietly show every recording as if it were that taxon's.
+//The ranks a classification is given at, from the highest to the lowest.
+//
+//A taxon is only used at one of these, as its rank names the field recordings and traits are
+//filtered by. The API used to ignore a field it did not know, so a taxon taken at a rank such as
+//Complex quietly showed every recording as if it were that taxon's; since 2026-09-21 it refuses
+//one with a 400 instead, which takes the search down rather than answering it wrongly. Either way
+//the rank has to be one the module can be filtered by, so this list stays.
+//
+//It is also the order and the columns: which rank is inside which, which the API's module_info
+//does not say, and the columns of a taxa row a classification is read from. A source's real tree
+//can put a rank between these that no column holds, such as a superfamily; /data/taxa/
+//classification/ gives that tree, and a breadcrumb drawn from these columns alone will not show
+//it.
 const TAXON_RANKS = [
   "kingdom",
   "class",
