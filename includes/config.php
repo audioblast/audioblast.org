@@ -15,5 +15,5 @@ define('CDN_BASE', 'https://cdn.audioblast.org');
 define('PAGE_PATTERN', '/^[a-z][a-z0-9_]*$/');
 
 // Tabulator CDN
-define('TABULATOR_CSS', CDN_BASE . '/tabulator/dist/css/tabulator.min.css');
-define('TABULATOR_JS', CDN_BASE . '/tabulator/dist/js/tabulator.min.js');
+define('TABULATOR_CSS', CDN_BASE . '/tabulator/5.4.3/dist/css/tabulator.min.css');
+define('TABULATOR_JS', CDN_BASE . '/tabulator/5.4.3/dist/js/tabulator.min.js');
